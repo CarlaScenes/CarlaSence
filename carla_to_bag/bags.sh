@@ -1,9 +1,1 @@
-python carla_to_bag.py -d /media/andreas/Seagate/CAVSENSE_INFO/carla_dataset_cavsense/10fps/complex_env/Town10_16_11_2021_11_55_44/ego1/ -t 2020_01_03 -r 0001 -f None
-python carla_to_bag.py -d /media/andreas/Seagate/CAVSENSE_INFO/carla_dataset_cavsense/10fps/complex_env/Town10_16_11_2021_11_55_44/ego0/ -t 2020_01_03 -r 0000 -f None
-python carla_to_bag.py -d /media/andreas/Seagate/CAVSENSE_INFO/carla_dataset_cavsense/10fps/highway/Town06_16_11_2021_11_55_44/ego0/     -t 2020_01_03 -r 0000 -f None
-python carla_to_bag.py -d /media/andreas/Seagate/CAVSENSE_INFO/carla_dataset_cavsense/10fps/rural/Town07_07_11_2021_23_29_34/ego0/       -t 2020_01_03 -r 0000 -f None
-python carla_to_bag.py -d /media/andreas/Seagate/CAVSENSE_INFO/carla_dataset_cavsense/10fps/rural/Town07_07_11_2021_23_29_34/ego1/       -t 2020_01_03 -r 0001 -f None
-python carla_to_bag.py -d /media/andreas/Seagate/CAVSENSE_INFO/carla_dataset_cavsense/10fps/weather/Town02_07_11_2021_01_51_11/ego0/     -t 2020_01_03 -r 0000 -f None
-python carla_to_bag.py -d /media/andreas/Seagate/CAVSENSE_INFO/carla_dataset_cavsense/10fps/weather/Town02_07_11_2021_01_51_11/ego1/     -t 2020_01_03 -r 0001 -f None
-python carla_to_bag.py -d /media/andreas/Seagate/CAVSENSE_INFO/carla_dataset_cavsense/10fps/slope/Town03_06_11_2021_09_01_11/ego0/       -t 2020_01_03 -r 0000 -f None
-python carla_to_bag.py -d /media/andreas/Seagate/CAVSENSE_INFO/carla_dataset_cavsense/10fps/slope/Town03_06_11_2021_09_01_11/ego1/       -t 2020_01_03 -r 0001 -f None
+python carla_to_bag.py -d /path_to/ego1/ -t 2020_01_03 -r 0001 -f None

@@ -1,3 +1,5 @@
+# How to access the dataset
+
 # To generate data from carla
 1. Run python multi_data_generator.py
 
@@ -17,4 +19,18 @@
 	- python carla_to_bag/align_poses.py -h for the documentation
 
 6. To evaluate results using evo, move LO1.txt, VO1.txt and MO1.txt and aligned_poses from vloam ros results to evo folder and type:
-	- evo_traj kitti MO1.txt VO1.txt LO1.txt  --ref=aligned_poses.txt -p --plot_mode=xyz -as
+    - evo_traj kitti MO1.txt VO1.txt LO1.txt  --ref=aligned_poses.txt -p --plot_mode=xyz -as
+
+
+
+### References
+1. Carla Simular [https://github.com/carla-simulator/carla]
+2. Pykitti [https://github.com/utiasSTARS/pykitti]
+3. 
+
+
+### Related Publications
+1. Countering Adversarial Attacks on Autonomous Vehicles Using Denoising Techniques: A Review
+- [https://ieeexplore.ieee.org/document/9678365]
+2. Deep multi-modal data analysis and fusion for robust scene understanding in CAVs
+- [https://ieeexplore.ieee.org/document/9733604]
