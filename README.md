@@ -1,7 +1,8 @@
 This code was used for the generation of the dataset CARLASENCES,  [paper](http://paperlink)
 
 # How to access the dataset
-
+The IP of the FTP server to download the dataset is 
+ ftp://195.251.58.20:60521
 # To generate data from carla
 1. Run python multi_data_generator.py
 # To convert carla data to bag files
