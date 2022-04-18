@@ -1,8 +1,9 @@
+This code was used for the generation of the dataset CARLASENCES,  [paper](http://paperlink)
+
 # How to access the dataset
 
 # To generate data from carla
 1. Run python multi_data_generator.py
-
 # To convert carla data to bag files
 
 1. Install conda
@@ -21,13 +22,13 @@
 6. To evaluate results using evo, move LO1.txt, VO1.txt and MO1.txt and aligned_poses from vloam ros results to evo folder and type:
     - evo_traj kitti MO1.txt VO1.txt LO1.txt  --ref=aligned_poses.txt -p --plot_mode=xyz -as
 
+# ScenarioRunner
+To run the files for ScenarioRunner follow [https://carla-scenariorunner.readthedocs.io/en/latest/]
 
 
 ### References
 1. Carla Simular [https://github.com/carla-simulator/carla]
 2. Pykitti [https://github.com/utiasSTARS/pykitti]
-3. 
-
 
 ### Related Publications
 1. Countering Adversarial Attacks on Autonomous Vehicles Using Denoising Techniques: A Review
