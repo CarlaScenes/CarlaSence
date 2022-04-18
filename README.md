@@ -1,5 +1,9 @@
 This code was used for the generation of the dataset CARLASENCES,  [paper](http://paperlink)
 
+Andreas Kloukiniotis, Andreas Papandreou , Christos Anagnostopoulos, Aris Lalos, Petros Kapsalas , Duongvan Nguyen, Konstantinos Moustakas,”CarlaScenes: A synthetic dataset for odometry in autonomous driving”,  CVPR 2022 Workshop on Autonomous Driving
+
+
+
 # How to access the dataset
 The IP of the FTP server to download the dataset is 
  ftp://195.251.58.20:60521
