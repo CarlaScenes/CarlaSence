@@ -1,9 +1,3 @@
-*/
-**********************************
-** Created by Nick Stagakis, 2021
-**********************************
-*/
-
 import sys
 import glob
 import shutil
@@ -30,10 +24,12 @@ import os
 from os import path
 from EgoVehicle import EgoVehicle
 
-def main():
-    assert (len(SimulationParams.ego_vehicle_spawn_point) == len(SimulationParams.sensor_json_filepath))
 
-    #Connect and load map
+def main():
+    assert (len(SimulationParams.ego_vehicle_spawn_point)
+            == len(SimulationParams.sensor_json_filepath))
+
+    # Connect and load map
     client = carla.Client('localhost', 2000)
     client.set_timeout(10.0)
     world = client.get_world()
@@ -41,11 +37,11 @@ def main():
     world = client.load_world(SimulationParams.town_map)
     blueprint_library = world.get_blueprint_library()
 
-    #Setup
+    # Setup
     setupWorld(world)
     setupTrafficManager(client)
 
-    #Get all required blueprints
+    # Get all required blueprints
     blueprintsVehicles = blueprint_library.filter('vehicle.*')
     vehicles_spawn_points = world.get_map().get_spawn_points()
     blueprintsWalkers = blueprint_library.filter('walker.pedestrian.*')
@@ -53,19 +49,22 @@ def main():
     walkers_spawn_points = world.get_random_location_from_navigation()
     lidar_segment_bp = blueprint_library.find('sensor.lidar.ray_cast_semantic')
 
-
-    egos=[]
+    egos = []
     for i in range(SimulationParams.number_of_ego_vehicles):
-        egos.append(EgoVehicle(SimulationParams.sensor_json_filepath[i], SimulationParams.ego_vehicle_spawn_point[i], world))
+        egos.append(EgoVehicle(
+            SimulationParams.sensor_json_filepath[i], SimulationParams.ego_vehicle_spawn_point[i], world))
 
-    #Spawn npc actors
-    w_all_actors, w_all_id = spawnWalkers(client, world, blueprintsWalkers, SimulationParams.num_of_walkers)
-    v_all_actors, v_all_id = spawnVehicles(client, world, vehicles_spawn_points, blueprintsVehicles, SimulationParams.num_of_vehicles)
+    # Spawn npc actors
+    w_all_actors, w_all_id = spawnWalkers(
+        client, world, blueprintsWalkers, SimulationParams.num_of_walkers)
+    v_all_actors, v_all_id = spawnVehicles(
+        client, world, vehicles_spawn_points, blueprintsVehicles, SimulationParams.num_of_vehicles)
     world.tick()
 
     spectator = world.get_spectator()
     transform = egos[0].ego.get_transform()
-    spectator.set_transform(carla.Transform(transform.location + carla.Location(z=100), carla.Rotation(pitch=-90)))
+    spectator.set_transform(carla.Transform(
+        transform.location + carla.Location(z=100), carla.Rotation(pitch=-90)))
 
     print("Starting simulation...")
 
@@ -74,17 +73,19 @@ def main():
         with CarlaSyncMode(world, []) as sync_mode:
             while True:
                 frame_id = sync_mode.tick(timeout=5.0)
-                if(k < SimulationParams.ignore_first_n_ticks):
+                if (k < SimulationParams.ignore_first_n_ticks):
                     k = k + 1
                     continue
                 for i in range(len(egos)):
                     data = egos[i].getSensorData(frame_id)
-                    
-                    output_folder = os.path.join(SimulationParams.data_output_subfolder, "ego" + str(i))
+
+                    output_folder = os.path.join(
+                        SimulationParams.data_output_subfolder, "ego" + str(i))
 
                     # save_sensors.saveAllSensors(output_folder, data, egos[i].sensor_types)
-                    save_sensors.saveAllSensors(output_folder, data, egos[i].sensor_names)
-                    
+                    save_sensors.saveAllSensors(
+                        output_folder, data, egos[i].sensor_names)
+
                     control = egos[i].ego.get_control()
                     angle = control.steer
                     save_sensors.saveSteeringAngle(angle, output_folder)
@@ -116,11 +117,10 @@ def main():
         for ego in egos:
             ego.destroy()
 
-        #This is to prevent Unreal from crashing from waiting the client.
+        # This is to prevent Unreal from crashing from waiting the client.
         settings = world.get_settings()
         settings.synchronous_mode = False
         world.apply_settings(settings)
-
 
 
 if __name__ == '__main__':
@@ -132,10 +132,11 @@ if __name__ == '__main__':
     finally:
         destination_folder = None
         if len(sys.argv[1:]) == 1:
-            assert path.exists(str(sys.argv[1:][0])), "Path does not exist"    
+            assert path.exists(str(sys.argv[1:][0])), "Path does not exist"
             destination_folder = sys.argv[1:][0]
 
         # move generated data to other folder
         if (destination_folder is not None and path.exists(str(SimulationParams.data_output_subfolder))):
-            shutil.move(SimulationParams.data_output_subfolder, destination_folder) 
+            shutil.move(SimulationParams.data_output_subfolder,
+                        destination_folder)
         print('\ndone.')
