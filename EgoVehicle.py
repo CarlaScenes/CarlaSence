@@ -2,38 +2,46 @@ import carla
 from carla import Transform, Location, Rotation
 from npc_spawning import spawnWalkers, spawnVehicles
 from configuration import attachSensorsToVehicle, SimulationParams, setupTrafficManager, setupWorld, createOutputDirectories, CarlaSyncMode
+from utils import g29_steering_wheel
 import save_sensors
 import random
 import json
 import time
 import queue
+import threading
+
 
 def findClosestSpawnPoint(spawn_points, target):
-    dist = [(target.location.x-spawn_points[i].location.x)**2 + (target.location.y-spawn_points[i].location.y)**2 + (target.location.z-spawn_points[i].location.z)**2 for i in range(len(spawn_points))]
+    dist = [(target.location.x-spawn_points[i].location.x)**2 + (target.location.y-spawn_points[i].location.y)
+            ** 2 + (target.location.z-spawn_points[i].location.z)**2 for i in range(len(spawn_points))]
     return spawn_points[dist.index(min(dist))]
+
 
 class EgoVehicle:
 
-    def __init__(self, config_filepath, position, world):
+    def __init__(self, config_filepath, position, world, args):
         self.world = world
 
         f = open(config_filepath)
         data = json.load(f)
         createOutputDirectories(data)
 
-        #Get all required blueprints
+        # Get all required blueprints
         blueprint_library = world.get_blueprint_library()
         blueprintsVehicles = blueprint_library.filter('vehicle.*')
         vehicles_spawn_points = world.get_map().get_spawn_points()
 
-        #Spawn and configure Ego vehicle
-        self.ego_bp = random.choice(blueprint_library.filter('vehicle.citroen.*'))
-        print ("************** ", self.ego_bp)
-        self.ego_bp.set_attribute('role_name','ego')
-        self.ego = world.spawn_actor(self.ego_bp, findClosestSpawnPoint(spawn_points=vehicles_spawn_points, target=position))
+        # Spawn and configure Ego vehicle
+        self.ego_bp = random.choice(
+            blueprint_library.filter('vehicle.citroen.*'))
+        print("************** ", self.ego_bp)
+        self.ego_bp.set_attribute('role_name', 'ego')
+        self.ego = world.spawn_actor(self.ego_bp, findClosestSpawnPoint(
+            spawn_points=vehicles_spawn_points, target=position))
         self.ego.set_autopilot(True)
 
-        self.sensors_ref, self.sensor_types, self.sensor_names = attachSensorsToVehicle(world, data, self.ego) #attachSensorsToVehicle should be a member function
+        self.sensors_ref, self.sensor_types, self.sensor_names = attachSensorsToVehicle(
+            world, data, self.ego)  # attachSensorsToVehicle should be a member function
 
         self.queues = []
         q = queue.Queue()
@@ -43,6 +51,16 @@ class EgoVehicle:
             q = queue.Queue()
             sensor.listen(q.put)
             self.queues.append(q)
+        print("Entering the manual control if block...")
+        print(SimulationParams.manual_control)
+        if SimulationParams.manual_control == True:
+            g29_thread = threading.Thread(
+                target=g29_steering_wheel.main,  # Pass the function
+                args=(args, world, self.ego)  # Pass the arguments
+            )
+            # Start the thread
+            g29_thread.start()
+            # g29_steering_wheel.main(SimulationParams)
 
     def getSensorData(self, frame_id):
         data = [self._retrieve_data(q, frame_id) for q in self.queues]
@@ -58,7 +76,7 @@ class EgoVehicle:
         [s.destroy() for s in self.sensors_ref]
         self.ego.destroy()
 
-        #This is to prevent Unreal from crashing from waiting the client.
+        # This is to prevent Unreal from crashing from waiting the client.
         settings = self.world.get_settings()
         settings.synchronous_mode = False
         self.world.apply_settings(settings)

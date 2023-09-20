@@ -29,6 +29,7 @@ import argparse
 import logging
 from numpy import random
 
+
 def main():
     argparser = argparse.ArgumentParser(
         description=__doc__)
@@ -92,10 +93,11 @@ def main():
         '--car-lights-on',
         action='store_true',
         default=False,
-        help='Enanble car lights')
+        help='Enable car lights')
     args = argparser.parse_args()
 
-    logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
+    logging.basicConfig(
+        format='%(levelname)s: %(message)s', level=logging.INFO)
 
     vehicles_list = []
     walkers_list = []
@@ -115,7 +117,6 @@ def main():
         if args.seed is not None:
             traffic_manager.set_random_device_seed(args.seed)
 
-
         if args.sync:
             settings = world.get_settings()
             traffic_manager.set_synchronous_mode(True)
@@ -131,10 +132,13 @@ def main():
         blueprintsWalkers = world.get_blueprint_library().filter(args.filterw)
 
         if args.safe:
-            blueprints = [x for x in blueprints if int(x.get_attribute('number_of_wheels')) == 4]
+            blueprints = [x for x in blueprints if int(
+                x.get_attribute('number_of_wheels')) == 4]
             blueprints = [x for x in blueprints if not x.id.endswith('isetta')]
-            blueprints = [x for x in blueprints if not x.id.endswith('carlacola')]
-            blueprints = [x for x in blueprints if not x.id.endswith('cybertruck')]
+            blueprints = [
+                x for x in blueprints if not x.id.endswith('carlacola')]
+            blueprints = [
+                x for x in blueprints if not x.id.endswith('cybertruck')]
             blueprints = [x for x in blueprints if not x.id.endswith('t2')]
 
         blueprints = sorted(blueprints, key=lambda bp: bp.id)
@@ -146,7 +150,8 @@ def main():
             random.shuffle(spawn_points)
         elif args.number_of_vehicles > number_of_spawn_points:
             msg = 'requested %d vehicles, but could only find %d spawn points'
-            logging.warning(msg, args.number_of_vehicles, number_of_spawn_points)
+            logging.warning(msg, args.number_of_vehicles,
+                            number_of_spawn_points)
             args.number_of_vehicles = number_of_spawn_points
 
         # @todo cannot import these directly.
@@ -164,10 +169,12 @@ def main():
                 break
             blueprint = random.choice(blueprints)
             if blueprint.has_attribute('color'):
-                color = random.choice(blueprint.get_attribute('color').recommended_values)
+                color = random.choice(
+                    blueprint.get_attribute('color').recommended_values)
                 blueprint.set_attribute('color', color)
             if blueprint.has_attribute('driver_id'):
-                driver_id = random.choice(blueprint.get_attribute('driver_id').recommended_values)
+                driver_id = random.choice(
+                    blueprint.get_attribute('driver_id').recommended_values)
                 blueprint.set_attribute('driver_id', driver_id)
             blueprint.set_attribute('role_name', 'autopilot')
 
@@ -178,8 +185,8 @@ def main():
 
             # spawn the cars and set their autopilot and light state all together
             batch.append(SpawnActor(blueprint, transform)
-                .then(SetAutopilot(FutureActor, True, traffic_manager.get_port()))
-                .then(SetVehicleLightState(FutureActor, light_state)))
+                         .then(SetAutopilot(FutureActor, True, traffic_manager.get_port()))
+                         .then(SetVehicleLightState(FutureActor, light_state)))
 
         for response in client.apply_batch_sync(batch, synchronous_master):
             if response.error:
@@ -192,7 +199,8 @@ def main():
         # -------------
         # some settings
         percentagePedestriansRunning = 0.0      # how many pedestrians will run
-        percentagePedestriansCrossing = 0.0     # how many pedestrians will walk through the road
+        # how many pedestrians will walk through the road
+        percentagePedestriansCrossing = 0.0
         # 1. take all the random locations to spawn
         spawn_points = []
         for i in range(args.number_of_walkers):
@@ -213,10 +221,12 @@ def main():
             if walker_bp.has_attribute('speed'):
                 if (random.random() > percentagePedestriansRunning):
                     # walking
-                    walker_speed.append(walker_bp.get_attribute('speed').recommended_values[1])
+                    walker_speed.append(walker_bp.get_attribute(
+                        'speed').recommended_values[1])
                 else:
                     # running
-                    walker_speed.append(walker_bp.get_attribute('speed').recommended_values[2])
+                    walker_speed.append(walker_bp.get_attribute(
+                        'speed').recommended_values[2])
             else:
                 print("Walker has no speed")
                 walker_speed.append(0.0)
@@ -234,7 +244,8 @@ def main():
         batch = []
         walker_controller_bp = world.get_blueprint_library().find('controller.ai.walker')
         for i in range(len(walkers_list)):
-            batch.append(SpawnActor(walker_controller_bp, carla.Transform(), walkers_list[i]["id"]))
+            batch.append(SpawnActor(walker_controller_bp,
+                         carla.Transform(), walkers_list[i]["id"]))
         results = client.apply_batch_sync(batch, True)
         for i in range(len(results)):
             if results[i].error:
@@ -260,11 +271,13 @@ def main():
             # start walker
             all_actors[i].start()
             # set walk to random point
-            all_actors[i].go_to_location(world.get_random_location_from_navigation())
+            all_actors[i].go_to_location(
+                world.get_random_location_from_navigation())
             # max speed
             all_actors[i].set_max_speed(float(walker_speed[int(i/2)]))
 
-        print('spawned %d vehicles and %d walkers, press Ctrl+C to exit.' % (len(vehicles_list), len(walkers_list)))
+        print('spawned %d vehicles and %d walkers, press Ctrl+C to exit.' %
+              (len(vehicles_list), len(walkers_list)))
 
         # example of how to use parameters
         traffic_manager.global_percentage_speed_difference(30.0)
@@ -284,7 +297,8 @@ def main():
             world.apply_settings(settings)
 
         print('\ndestroying %d vehicles' % len(vehicles_list))
-        client.apply_batch([carla.command.DestroyActor(x) for x in vehicles_list])
+        client.apply_batch([carla.command.DestroyActor(x)
+                           for x in vehicles_list])
 
         # stop walker controllers (list is [controller, actor, controller, actor ...])
         for i in range(0, len(all_id), 2):
@@ -294,6 +308,7 @@ def main():
         client.apply_batch([carla.command.DestroyActor(x) for x in all_id])
 
         time.sleep(0.5)
+
 
 if __name__ == '__main__':
 
