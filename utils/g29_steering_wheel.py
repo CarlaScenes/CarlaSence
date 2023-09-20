@@ -12,7 +12,7 @@
 Welcome to CARLA manual control with steering wheel Logitech G29.
 
 To drive start by preshing the brake pedal.
-Change your wheel_config.ini according to your steering wheel.
+Change your wheel.ini according to your steering wheel.
 
 To find out the values of your steering wheel use jstest-gtk in Ubuntu.
 
@@ -129,10 +129,10 @@ def get_actor_display_name(actor, truncate=250):
 
 
 class World(object):
-    def __init__(self, carla_world, hud, actor_filter):
+    def __init__(self, carla_world, hud, actor_filter, ego_vehicle):
         self.world = carla_world
         self.hud = hud
-        self.player = None
+        self.player = ego_vehicle
         self.collision_sensor = None
         self.lane_invasion_sensor = None
         self.gnss_sensor = None
@@ -155,14 +155,16 @@ class World(object):
             color = random.choice(
                 blueprint.get_attribute('color').recommended_values)
             blueprint.set_attribute('color', color)
-        # Spawn the player.
+        # Spawn the player. This ideally should not be hit according to the passed arguments.
+        # TODO: Verify the statements and remove this code.
         if self.player is not None:
-            spawn_point = self.player.get_transform()
-            spawn_point.location.z += 2.0
-            spawn_point.rotation.roll = 0.0
-            spawn_point.rotation.pitch = 0.0
-            self.destroy()
-            self.player = self.world.try_spawn_actor(blueprint, spawn_point)
+            print("self.player is not None")
+            # spawn_point = self.player.get_transform()
+            # spawn_point.location.z += 2.0
+            # spawn_point.rotation.roll = 0.0
+            # spawn_point.rotation.pitch = 0.0
+            # # self.destroy()
+            # self.player = self.world.try_spawn_actor(blueprint, spawn_point)
         while self.player is None:
             spawn_points = self.world.get_map().get_spawn_points()
             spawn_point = random.choice(
@@ -809,21 +811,18 @@ class CameraManager(object):
 # ==============================================================================
 
 
-def game_loop(args):
+def game_loop(args, world, ego_vehicle):
     pygame.init()
     pygame.font.init()
-    world = None
+    # world = None
 
     try:
-        client = carla.Client(args.host, args.port)
-        client.set_timeout(2.0)
-
         display = pygame.display.set_mode(
             (args.width, args.height),
             pygame.HWSURFACE | pygame.DOUBLEBUF)
 
         hud = HUD(args.width, args.height)
-        world = World(client.get_world(), hud, args.filter)
+        world = World(world, hud, args.filterv, ego_vehicle)
         controller = DualControl(world, args.autopilot)
 
         clock = pygame.time.Clock()
@@ -848,40 +847,47 @@ def game_loop(args):
 # ==============================================================================
 
 
-def main():
-    argparser = argparse.ArgumentParser(
-        description='CARLA Manual Control Client')
-    argparser.add_argument(
-        '-v', '--verbose',
-        action='store_true',
-        dest='debug',
-        help='print debug information')
-    argparser.add_argument(
-        '--host',
-        metavar='H',
-        default='127.0.0.1',
-        help='IP of the host server (default: 127.0.0.1)')
-    argparser.add_argument(
-        '-p', '--port',
-        metavar='P',
-        default=2000,
-        type=int,
-        help='TCP port to listen to (default: 2000)')
-    argparser.add_argument(
-        '-a', '--autopilot',
-        action='store_true',
-        help='enable autopilot')
-    argparser.add_argument(
-        '--res',
-        metavar='WIDTHxHEIGHT',
-        default='1280x720',
-        help='window resolution (default: 1280x720)')
-    argparser.add_argument(
-        '--filter',
-        metavar='PATTERN',
-        default='vehicle.*',
-        help='actor filter (default: "vehicle.*")')
-    args = argparser.parse_args()
+def main(args, world, ego_vehicle):
+    print(world)
+    print("G29 Steering wheel main")
+    # argparser = argparse.ArgumentParser(
+    #     description='CARLA Manual Control Client')
+    # argparser.add_argument(
+    #     '-v', '--verbose',
+    #     action='store_true',
+    #     dest='debug',
+    #     help='print debug information')
+    # argparser.add_argument(
+    #     '--host',
+    #     metavar='H',
+    #     default='127.0.0.1',
+    #     help='IP of the host server (default: 127.0.0.1)')
+    # argparser.add_argument(
+    #     '-p', '--port',
+    #     metavar='P',
+    #     default=2000,
+    #     type=int,
+    #     help='TCP port to listen to (default: 2000)')
+    # argparser.add_argument(
+    #     '-a', '--autopilot',
+    #     action='store_true',
+    #     help='enable autopilot')
+    # argparser.add_argument(
+    #     '--res',
+    #     metavar='WIDTHxHEIGHT',
+    #     default='1280x720',
+    #     help='window resolution (default: 1280x720)')
+    # # argparser.add_argument(
+    # #     '--filter',
+    # #     metavar='PATTERN',
+    # #     default='vehicle.*',
+    # #     help='actor filter (default: "vehicle.*")')
+    # argparser.add_argument(
+    #     '--filterv',
+    #     metavar='PATTERN',
+    #     default='vehicle.*',
+    #     help='vehicles filter (default: "vehicle.*")')
+    # args = argparser.parse_args()
 
     args.width, args.height = [int(x) for x in args.res.split('x')]
 
@@ -894,7 +900,7 @@ def main():
 
     try:
 
-        game_loop(args)
+        game_loop(args, world, ego_vehicle)
 
     except KeyboardInterrupt:
         print('\nCancelled by user. Bye!')
