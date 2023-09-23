@@ -23,7 +23,7 @@ import time
 import queue
 import os
 from os import path
-from EgoVehicle import EgoVehicle
+from ego_vehicle import EgoVehicle
 from utils.arg_parser import CommandLineArgsParser
 
 
