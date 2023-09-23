@@ -17,10 +17,10 @@ class SimulationParams:
     sensor_json_filepath = [
         "config/sensors.json"
     ]
-    ego_vehicle_spawn_point = [
-        Transform(Location(x=35.679951, y=80.979996, z=0.500000),
-                  Rotation(pitch=0.000000, yaw=-89.999817, roll=0.000000))
-    ]
+    # ego_vehicle_spawn_point = [
+    #     Transform(Location(x=35.679951, y=80.979996, z=0.500000),
+    #               Rotation(pitch=0.000000, yaw=-89.999817, roll=0.000000))
+    # ]
     number_of_ego_vehicles = None
     manual_control = None
     dt_string = datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
