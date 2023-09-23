@@ -24,124 +24,20 @@ import queue
 import os
 from os import path
 from EgoVehicle import EgoVehicle
+from utils.arg_parser import CommandLineArgsParser
 
 
 def main():
 
-    argparser = argparse.ArgumentParser(
-        description=__doc__)
-    argparser.add_argument(
-        '--host',
-        metavar='H',
-        default='127.0.0.1',
-        help='IP of the host server (default: 127.0.0.1)')
-    argparser.add_argument(
-        '-p', '--port',
-        metavar='P',
-        default=2000,
-        type=int,
-        help='TCP port to listen to (default: 2000)')
-    argparser.add_argument(
-        '-t', '--timeout',
-        metavar='T',
-        default=10,
-        type=int,
-        help='Timeout while trying to establish connection to CARLA server')
-    argparser.add_argument(
-        '--map',
-        metavar='M',
-        default="Town03",
-        type=str,
-        help='Initial map (default: Town03)')
-    argparser.add_argument(
-        '-n', '--number-of-vehicles',
-        metavar='N',
-        default=10,
-        type=int,
-        help='number of vehicles (default: 10)')
-    argparser.add_argument(
-        '-w', '--number-of-walkers',
-        metavar='W',
-        default=50,
-        type=int,
-        help='number of walkers (default: 50)')
-    argparser.add_argument(
-        '--safe',
-        action='store_true',
-        help='avoid spawning vehicles prone to accidents')
-    argparser.add_argument(
-        '--filterv',
-        metavar='PATTERN',
-        default='vehicle.*',
-        help='vehicles filter (default: "vehicle.*")')
-    argparser.add_argument(
-        '--filterw',
-        metavar='PATTERN',
-        default='walker.pedestrian.*',
-        help='pedestrians filter (default: "walker.pedestrian.*")')
-    argparser.add_argument(
-        '--tm-port',
-        metavar='P',
-        default=8000,
-        type=int,
-        help='port to communicate with TM (default: 8000)')
-    argparser.add_argument(
-        '--sync',
-        action='store_true',
-        help='Synchronous mode execution')
-    argparser.add_argument(
-        '--hybrid',
-        action='store_true',
-        help='Enanble')
-    argparser.add_argument(
-        '-s', '--seed',
-        metavar='S',
-        type=int,
-        help='Random device seed')
-    argparser.add_argument(
-        '--car-lights-on',
-        action='store_true',
-        default=False,
-        help='Enable car lights')
-    argparser.add_argument(
-        '--delta-seconds',
-        default=.1,
-        type=float,
-        help='Delta seconds between frames (default: .1)')
-    argparser.add_argument(
-        '--ignore-first-n-ticks',
-        default=1,
-        help='Ignore first n ticks in simulation (default: 70)')
-    argparser.add_argument(
-        '--manual-control',
-        default=False,
-        # type=bool,
-        action='store_true',
-        help='Are we manully controlling the ego vehicle using Logitech G29 Racing Wheel? (default: False)')
-    argparser.add_argument(
-        '-a', '--autopilot',
-        action='store_true',
-        help='enable autopilot')
-    argparser.add_argument(
-        '--res',
-        metavar='WIDTHxHEIGHT',
-        default='1280x720',
-        help='window resolution (default: 1280x720)')
-    argparser.add_argument(
-        '-v', '--verbose',
-        action='store_true',
-        dest='debug',
-        help='print debug information')
-    args = argparser.parse_args()
+    args_parser = CommandLineArgsParser()
+    args = args_parser.parse_args()
     print(args)
 
-    # assert (len(SimulationParams.ego_vehicle_spawn_point)
-    #         == len(SimulationParams.sensor_json_filepath))
-
-    # Connect and load map
-    # client = carla.Client('localhost', 2000)
+    # Create CARLA client
     client = carla.Client(args.host, args.port)
     client.set_timeout(args.timeout)
+
+    # Setup simulation parameters
     SimulationParams.town_map = args.map
     SimulationParams.num_of_walkers = args.number_of_walkers
     SimulationParams.num_of_vehicles = args.number_of_vehicles
@@ -178,7 +74,7 @@ def main():
     egos = []
     for i in range(SimulationParams.number_of_ego_vehicles):
         egos.append(EgoVehicle(
-            SimulationParams.sensor_json_filepath[i], SimulationParams.ego_vehicle_spawn_point[i], world, args))
+            SimulationParams.sensor_json_filepath[i], None, world, args))
 
     # Spawn npc actors
     w_all_actors, w_all_id = spawnWalkers(
@@ -216,7 +112,7 @@ def main():
                     angle = control.steer
                     save_sensors.saveSteeringAngle(angle, output_folder)
 
-                    # move output data to desired folder
+                    # TODO: move output data to desired folder. Is this really necessary?
                     # if (frame_id > 1000):
                     #     destination_folder = None
                     #     if len(sys.argv[1:]) == 1:
@@ -255,14 +151,3 @@ if __name__ == '__main__':
         main()
     except KeyboardInterrupt:
         pass
-    finally:
-        destination_folder = 'output/'
-        # if len(sys.argv[1:]) == 1:
-        #     assert path.exists(str(sys.argv[1:][0])), "Path does not exist"
-        #     destination_folder = sys.argv[1:][0]
-
-        # move generated data to other folder
-        if (destination_folder is not None and path.exists(str(SimulationParams.data_output_subfolder))):
-            shutil.move(SimulationParams.data_output_subfolder,
-                        destination_folder)
-        print('\ndone.')

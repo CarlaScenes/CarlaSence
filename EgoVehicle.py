@@ -36,9 +36,12 @@ class EgoVehicle:
             blueprint_library.filter('vehicle.citroen.*'))
         print("************** ", self.ego_bp)
         self.ego_bp.set_attribute('role_name', 'ego')
-        self.ego = world.spawn_actor(self.ego_bp, findClosestSpawnPoint(
-            spawn_points=vehicles_spawn_points, target=position))
-        self.ego.set_autopilot(True)
+        random_spawn_point = random.choice(vehicles_spawn_points)
+        self.ego = world.spawn_actor(self.ego_bp, random_spawn_point)
+
+        # TODO: Revise this. I am spawning at a random location. Is this correct?
+        # self.ego = world.spawn_actor(self.ego_bp, findClosestSpawnPoint(
+        #     spawn_points=vehicles_spawn_points, target=position))
 
         self.sensors_ref, self.sensor_types, self.sensor_names = attachSensorsToVehicle(
             world, data, self.ego)  # attachSensorsToVehicle should be a member function
@@ -51,16 +54,17 @@ class EgoVehicle:
             q = queue.Queue()
             sensor.listen(q.put)
             self.queues.append(q)
-        print("Entering the manual control if block...")
-        print(SimulationParams.manual_control)
+
+        # TODO: Is threading necessary?
+        print("Entering the manual control block...")
         if SimulationParams.manual_control == True:
             g29_thread = threading.Thread(
-                target=g29_steering_wheel.main,  # Pass the function
-                args=(args, world, self.ego)  # Pass the arguments
+                target=g29_steering_wheel.main,
+                args=(args, world, self.ego)
             )
-            # Start the thread
             g29_thread.start()
-            # g29_steering_wheel.main(SimulationParams)
+        else:
+            self.ego.set_autopilot(True)
 
     def getSensorData(self, frame_id):
         data = [self._retrieve_data(q, frame_id) for q in self.queues]
