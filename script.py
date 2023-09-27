@@ -38,9 +38,9 @@ blueprintsWalkers = blueprint_library.filter('walker.pedestrian.*')
 # Spawn npc actors
 # TODO: Reverify this. It is not working as expected sometimes.
 w_all_actors, w_all_id = spawnWalkers(
-    client, world, blueprintsWalkers, 50)
+    client, world, blueprintsWalkers, 15)
 v_all_actors, v_all_id = spawnVehicles(
-    client, world, vehicles_spawn_points, blueprintsVehicles, 15)
+    client, world, vehicles_spawn_points, blueprintsVehicles, 20)
 world.tick()
 
 output_folder = 'out'
@@ -82,10 +82,6 @@ event_camera_sensor = world.spawn_actor(event_camera_bp, new_transform)
 
 
 def process_lidar(lidar_data):
-    # Sample code to create a depth image from LiDAR data (example only)
-
-    # Convert LiDAR data to a numpy array of shape (num_points, 4)
-    # Each row contains (x, y, z, intensity) for a LiDAR point
     lidar_points = np.frombuffer(lidar_data.raw_data, dtype=np.float32)
     lidar_points = lidar_points.reshape(-1, 4)
 
@@ -94,7 +90,6 @@ def process_lidar(lidar_data):
     y = lidar_points[:, 1]
     z = lidar_points[:, 2]
 
-    # Create a depth image from the Z coordinates
     # You may need to adjust the scaling and parameters based on your LiDAR sensor
     min_depth = 0.0
     max_depth = 50.0  # Range set based on your LiDAR setup
@@ -105,12 +100,8 @@ def process_lidar(lidar_data):
 
 
 def process_radar(radar_data):
-    # Sample code to visualize RADAR data (example only)
-
     # Convert RADAR data to a numpy array
     radar_points = np.frombuffer(radar_data.raw_data, dtype=np.float32)
-
-    # You can perform custom processing and visualization here
 
     return radar_points  # Example: Return the raw RADAR data for visualization
 
@@ -119,8 +110,6 @@ def process_radar(radar_data):
 output_dir = 'out'
 os.makedirs(output_dir, exist_ok=True)
 sensor_names = ['rgb', 'lidar', 'radar']
-
-frame = 0
 
 
 def rgb_callback(data):
