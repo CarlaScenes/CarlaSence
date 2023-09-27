@@ -49,13 +49,15 @@ def spawnVehicles(client, world, spawn_points, blueprintsVehicles, number):
                      .then(SetAutopilot(FutureActor, True, 8000)))
         #  .then(SetVehicleLightState(FutureActor, light_state)))
 
-        for response in client.apply_batch_sync(batch, True):
-            if response.error:
-                logging.error(response.error)
-            else:
-                vehicles_list.append(response.actor_id)
-        all_actors = world.get_actors(vehicles_list)
-        return all_actors, vehicles_list
+    for response in client.apply_batch_sync(batch, True):
+        if response.error:
+            print(response)
+            logging.error(response.error)
+        else:
+            vehicles_list.append(response.actor_id)
+    print("spawned %d vehicles.", len(vehicles_list))
+    all_actors = world.get_actors(vehicles_list)
+    return all_actors, vehicles_list
 
 
 def spawnWalkers(client, world, blueprintsWalkers, number):
