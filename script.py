@@ -37,11 +37,11 @@ blueprintsWalkers = blueprint_library.filter('walker.pedestrian.*')
 
 # Spawn npc actors
 # TODO: Reverify this. It is not working as expected sometimes.
-w_all_actors, w_all_id = spawnWalkers(
-    client, world, blueprintsWalkers, 15)
-v_all_actors, v_all_id = spawnVehicles(
-    client, world, vehicles_spawn_points, blueprintsVehicles, 20)
-world.tick()
+# w_all_actors, w_all_id = spawnWalkers(
+#     client, world, blueprintsWalkers, 15)
+# v_all_actors, v_all_id = spawnVehicles(
+#     client, world, vehicles_spawn_points, blueprintsVehicles, 20)
+# world.tick()
 
 output_folder = 'out'
 os.makedirs(output_folder, exist_ok=True)
@@ -51,14 +51,14 @@ rgb_sensor_bp = world.get_blueprint_library().find('sensor.camera.rgb')
 rgb_sensor_bp.set_attribute('image_size_x', '800')
 rgb_sensor_bp.set_attribute('image_size_y', '600')
 rgb_sensor_bp.set_attribute('fov', '90')
-rgb_sensor_bp.set_attribute('sensor_tick', '1.0')
+rgb_sensor_bp.set_attribute('sensor_tick', '.10')
 rgb_sensor = world.spawn_actor(rgb_sensor_bp, new_transform)
 
 # LiDAR setup
 lidar_bp = world.get_blueprint_library().find('sensor.lidar.ray_cast')
 lidar_bp.set_attribute('range', '120')  # Adjust range as needed
 lidar_bp.set_attribute('channels', '64')
-lidar_bp.set_attribute('sensor_tick', '1.0')
+lidar_bp.set_attribute('sensor_tick', '.10')
 lidar_bp.set_attribute('points_per_second', '3000000')
 lidar_bp.set_attribute('upper_fov', '10.0')
 lidar_bp.set_attribute('lower_fov', '-30.0')
@@ -70,6 +70,7 @@ lidar_sensor = world.spawn_actor(lidar_bp, new_transform)
 
 # RADAR setup
 radar_bp = world.get_blueprint_library().find('sensor.other.radar')
+radar_bp.set_attribute('sensor_tick', '.10')
 radar_sensor = world.spawn_actor(radar_bp, new_transform)
 
 # Event Camera setup
@@ -77,7 +78,7 @@ event_camera_bp = world.get_blueprint_library().find('sensor.camera.dvs')
 event_camera_bp.set_attribute('image_size_x', '800')
 event_camera_bp.set_attribute('image_size_y', '600')
 event_camera_bp.set_attribute('fov', '90')
-event_camera_bp.set_attribute('sensor_tick', '1.0')  # Adjust tick as needed
+event_camera_bp.set_attribute('sensor_tick', '.10')  # Adjust tick as needed
 event_camera_sensor = world.spawn_actor(event_camera_bp, new_transform)
 
 
@@ -114,12 +115,10 @@ sensor_names = ['rgb', 'lidar', 'radar']
 
 def rgb_callback(data):
     timestamp = data.timestamp
-    timestamp_str = str(timestamp).replace(".", "_")
     image = np.frombuffer(data.raw_data, dtype=np.uint8).reshape(
         (data.height, data.width, 4))
     output_file = os.path.join(
-        output_dir, 'rgb', f'{timestamp_str}.png')
-    print(output_file)
+        output_dir, 'rgb', f'{timestamp}.png')
     cv2.imwrite(output_file, image)
 
 
@@ -131,20 +130,20 @@ def lidar_callback(data):
     point_cloud = o3d.geometry.PointCloud()
     point_cloud.points = o3d.utility.Vector3dVector(lidar_xyz)
     filename = os.path.join(output_dir, 'lidar', f'{timestamp}.ply')
-    print(filename)
     o3d.io.write_point_cloud(filename, point_cloud)
 
 
 def radar_callback(data):
+    timestamp = data.timestamp
     points = np.frombuffer(data.raw_data, dtype=np.dtype('f4'))
     points = np.reshape(points, (len(data), 4))
     radar_data = np.array([(p[0], p[1], p[2], p[3])
                           for p in points], dtype=np.dtype('f4'))
-    np.save(f'out/radar/{data.timestamp}data.npy', radar_data)
+    np.save(f'out/radar/{timestamp}.npy', radar_data)
 
 
 def dvs_callback(data):
-    print(data.timestamp)
+    timestamp = data.timestamp
     dvs_events = np.frombuffer(data.raw_data, dtype=np.dtype([
         ('x', np.uint16), ('y', np.uint16), ('t', np.int64), ('pol', np.bool)]))
     dvs_img = np.zeros((data.height, data.width, 3), dtype=np.uint8)
@@ -154,7 +153,7 @@ def dvs_callback(data):
     surface = pygame.surfarray.make_surface(dvs_img.swapaxes(0, 1))
     output_dir = 'out/dvs'
     os.makedirs(output_dir, exist_ok=True)
-    image_filename = os.path.join(output_dir, f'{data.timestamp}.png')
+    image_filename = os.path.join(output_dir, f'{timestamp}.png')
     pygame.image.save(surface, image_filename)
 
 
@@ -181,11 +180,3 @@ rgb_sensor.destroy()
 lidar_sensor.destroy()
 radar_sensor.destroy()
 event_camera_sensor.destroy()
-
-# Destroy the walkers
-for actor in w_all_actors:
-    actor.destroy()
-
-# Destroy the vehicles
-for actor in v_all_actors:
-    actor.destroy()

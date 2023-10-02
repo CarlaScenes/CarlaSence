@@ -44,7 +44,7 @@ def main():
     SimulationParams.delta_seconds = args.delta_seconds
     SimulationParams.ignore_first_n_ticks = args.ignore_first_n_ticks
     # TODO: Is > 1 ego vehicle really required?
-    SimulationParams.number_of_ego_vehicles = 1
+    SimulationParams.number_of_ego_vehicles = args.number_of_ego_vehicles
     SimulationParams.PHASE = SimulationParams.town_map + \
         "_" + SimulationParams.dt_string
     SimulationParams.data_output_subfolder = os.path.join(
@@ -84,9 +84,10 @@ def main():
     world.tick()
 
     spectator = world.get_spectator()
-    transform = egos[0].ego.get_transform()
-    spectator.set_transform(carla.Transform(
-        transform.location + carla.Location(z=100), carla.Rotation(pitch=-90)))
+    if (SimulationParams.number_of_ego_vehicles > 0):
+        transform = egos[0].ego.get_transform()
+        spectator.set_transform(carla.Transform(
+            transform.location + carla.Location(z=100), carla.Rotation(pitch=-90)))
 
     print("Starting simulation...")
 
