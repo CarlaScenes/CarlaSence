@@ -42,9 +42,9 @@ class CommandLineArgsParser:
         self.parser.add_argument(
             '--map',
             metavar='M',
-            default="Town03",
+            default="Town10HD_Opt",
             type=str,
-            help='Initial map (default: Town03)')
+            help='Initial map (default: Town10HD_Opt)')
         self.parser.add_argument(
             '-n', '--number-of-vehicles',
             metavar='N',
@@ -105,6 +105,11 @@ class CommandLineArgsParser:
             default=1,
             help='Ignore first n ticks in simulation (default: 70)')
         self.parser.add_argument(
+            '--number-of-ego-vehicles',
+            default=1,
+            type=int,
+            help='The number of ego vehicles in our simulation (default: 1)')
+        self.parser.add_argument(
             '--manual-control',
             default=False,
             action='store_true',
@@ -126,3 +131,13 @@ class CommandLineArgsParser:
 
     def parse_args(self):
         return self.parser.parse_args()
+
+    def int_within_range(min_val, max_val):
+        def validate(value):
+            int_value = int(value)
+            if min_val <= int_value <= max_val:
+                return int_value
+            else:
+                raise argparse.ArgumentTypeError(
+                    f"Value must be between {min_val} and {max_val}")
+        return validate
