@@ -56,7 +56,7 @@ def main():
 
     world = client.get_world()
     avail_maps = client.get_available_maps()
-    world = client.load_world(SimulationParams.town_map)
+    # world = client.load_world(SimulationParams.town_map)
     blueprint_library = world.get_blueprint_library()
 
     # Setup
