@@ -2,15 +2,15 @@ import os
 import cv2
 
 # Directory containing the images
-image_dir = '/home/apg/manideep/carla/out/rgb'
+image_dir = '/home/apg/manideep/carla/out/optical'
 
 # Output video filename
-output_video = 'rgb.mp4'
+output_video = 'optical.mp4'
 
 # Parameters for video frame size and frame rate
-frame_width = 640
-frame_height = 480
-frame_rate = 1  # Frames per second
+frame_width = 1920
+frame_height = 1280
+frame_rate = 10  # Frames per second
 
 # Get a list of image files in the directory
 image_files = [f for f in os.listdir(image_dir) if f.endswith(('.jpg', '.png'))]

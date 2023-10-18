@@ -4,23 +4,38 @@ import numpy as np
 import open3d as o3d
 
 # Load the PLY file
-# pcd = o3d.io.read_point_cloud(
-#     '/home/apg/manideep/carla/out/lidar/22.85948852263391.ply')
-# points = np.asarray(pcd.points)
+pcd = o3d.io.read_point_cloud(
+    '/home/apg/manideep/carla/out/lidar/1926.7729983898898.ply')
+points = np.asarray(pcd.points)
 
-# # Extract the XYZ coordinates from the loaded point cloud
-# point_cloud = points[:, :3]
+# Extract the XYZ coordinates from the loaded point cloud
+point_cloud = points[:, :3]
 
 
-# # Optional: Visualize the point cloud
-# o3d_pc = o3d.geometry.PointCloud()
-# o3d_pc.points = o3d.utility.Vector3dVector(point_cloud)
-# o3d.visualization.draw_geometries( [o3d_pc],
-#                                   zoom=0.15999999999999984,
-#                                   front=[-0.90981715783548767, -
-#                                          0.35379372132251835, 0.21693948939950897],
-#                                   lookat=[10.0, 10.0, 10.0],
-#                                   up=[0.09401892479298736, 0.33343013896937823, 0.93807504188504653])
+# Optional: Visualize the point cloud
+o3d_pc = o3d.geometry.PointCloud()
+o3d_pc.points = o3d.utility.Vector3dVector(point_cloud)
+o3d.visualization.draw_geometries( [o3d_pc])
+
+# {
+# 	"class_name" : "ViewTrajectory",
+# 	"interval" : 29,
+# 	"is_loop" : false,
+# 	"trajectory" : 
+# 	[
+# 		{
+# 			"boundingbox_max" : [ 109.03180694580078, 88.123725891113281, 20.824602127075195 ],
+# 			"boundingbox_min" : [ 2.8766894340515137, -73.388092041015625, -3.0116114616394043 ],
+# 			"field_of_view" : 60.0,
+# 			"front" : [ -0.98697397365259365, -0.13138490724786892, -0.092846009498945087 ],
+# 			"lookat" : [ 55.954248189926147, 7.3678169250488281, 8.9064953327178955 ],
+# 			"up" : [ -0.10795593810728604, 0.11298358359598086, 0.98771464769192618 ],
+# 			"zoom" : 0.23999999999999957
+# 		}
+# 	],
+# 	"version_major" : 1,
+# 	"version_minor" : 0
+# }
 
 # def rotate_view(vis):
 #         print("rotate_view")
@@ -76,51 +91,54 @@ import open3d as o3d
 # vis.capture_screen_image("/home/apg/manideep/carla/utils/filename.png", True)
 # vis.destroy_window()
 
+# -----------------------------------------------------------------------
+# Working code
+# -----------------------------------------------------------------------
 
 # import open3d as o3d
-import os
+# import os
 
-# # Directory containing the PLY files
-ply_directory = '/home/apg/manideep/carla/out/lidar/'
+# # # Directory containing the PLY files
+# ply_directory = '/home/apg/manideep/carla/out/lidar/'
 
-# Output directory for PNG images
-output_directory = '/home/apg/manideep/carla/out/lidar_png/'
+# # Output directory for PNG images
+# output_directory = '/home/apg/manideep/carla/out/lidar_png/'
 
-# Create the output directory if it doesn't exist
-os.makedirs(output_directory, exist_ok=True)
+# # Create the output directory if it doesn't exist
+# os.makedirs(output_directory, exist_ok=True)
 
-# List all PLY files in the directory
-ply_files = [f for f in os.listdir(ply_directory) if f.endswith('.ply')]
+# # List all PLY files in the directory
+# ply_files = [f for f in os.listdir(ply_directory) if f.endswith('.ply')]
 
-# Loop through each PLY file
-for ply_file in ply_files:
-    # Load the PLY file
-    pcd = o3d.io.read_point_cloud(os.path.join(ply_directory, ply_file))
-    points = np.asarray(pcd.points)
+# # Loop through each PLY file
+# for ply_file in ply_files:
+#     # Load the PLY file
+#     pcd = o3d.io.read_point_cloud(os.path.join(ply_directory, ply_file))
+#     points = np.asarray(pcd.points)
 
-    # Extract the XYZ coordinates from the loaded point cloud
-    point_cloud = points[:, :3]
+#     # Extract the XYZ coordinates from the loaded point cloud
+#     point_cloud = points[:, :3]
 
-    # Create a point cloud object
-    o3d_pc = o3d.geometry.PointCloud()
-    o3d_pc.points = o3d.utility.Vector3dVector(point_cloud)
+#     # Create a point cloud object
+#     o3d_pc = o3d.geometry.PointCloud()
+#     o3d_pc.points = o3d.utility.Vector3dVector(point_cloud)
 
-    # Create a visualizer
-    vis = o3d.visualization.Visualizer()
-    vis.create_window(visible=True, width=1920, height=1080)
-    vis.add_geometry(o3d_pc)
+#     # Create a visualizer
+#     vis = o3d.visualization.Visualizer()
+#     vis.create_window(visible=True, width=1920, height=1080)
+#     vis.add_geometry(o3d_pc)
 
-    # Render and capture the image
-    vis.poll_events()
-    vis.update_renderer()
+#     # Render and capture the image
+#     vis.poll_events()
+#     vis.update_renderer()
 
-    # Save the captured image as a PNG with the same filename
-    image_filename = os.path.splitext(ply_file)[0] + '.png'
-    image_path = os.path.join(output_directory, image_filename)
-    vis.capture_screen_image(image_path, True)
+#     # Save the captured image as a PNG with the same filename
+#     image_filename = os.path.splitext(ply_file)[0] + '.png'
+#     image_path = os.path.join(output_directory, image_filename)
+#     vis.capture_screen_image(image_path, True)
 
-    # Close the visualizer
-    vis.destroy_window()
-    # break
+#     # Close the visualizer
+#     vis.destroy_window()
+#     # break
 
-print("Images saved to:", output_directory)
+# print("Images saved to:", output_directory)

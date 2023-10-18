@@ -127,3 +127,7 @@ dmypy.json
 # Output directory
 output/*
 out/*
+
+# Ignore mp4
+
+*.mp4
