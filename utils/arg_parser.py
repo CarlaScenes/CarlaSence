@@ -102,8 +102,9 @@ class CommandLineArgsParser:
             help='Delta seconds between frames (default: .1)')
         self.parser.add_argument(
             '--ignore-first-n-ticks',
-            default=1,
-            help='Ignore first n ticks in simulation (default: 70)')
+            default=30,
+            type=int,
+            help='Ignore first n ticks in simulation (default: 30)')
         self.parser.add_argument(
             '--number-of-ego-vehicles',
             default=1,
@@ -128,6 +129,10 @@ class CommandLineArgsParser:
             action='store_true',
             dest='debug',
             help='print debug information')
+        self.parser.add_argument(
+            '--weather',
+            default='carla.WeatherParameters.ClearNoon',
+            help='set the weather for carla simulation.')
 
     def parse_args(self):
         return self.parser.parse_args()

@@ -5,7 +5,7 @@ import open3d as o3d
 
 # Load the PLY file
 pcd = o3d.io.read_point_cloud(
-    '/home/apg/manideep/carla/out/lidar/1926.7729983898898.ply')
+    '/home/apg/manideep/carla/out/Town10HD_Opt_20_10_2023_12_27_56/ego0/lidar_64/03671.ply')
 points = np.asarray(pcd.points)
 
 # Extract the XYZ coordinates from the loaded point cloud
@@ -15,13 +15,13 @@ point_cloud = points[:, :3]
 # Optional: Visualize the point cloud
 o3d_pc = o3d.geometry.PointCloud()
 o3d_pc.points = o3d.utility.Vector3dVector(point_cloud)
-o3d.visualization.draw_geometries( [o3d_pc])
+o3d.visualization.draw_geometries([o3d_pc])
 
 # {
 # 	"class_name" : "ViewTrajectory",
 # 	"interval" : 29,
 # 	"is_loop" : false,
-# 	"trajectory" : 
+# 	"trajectory" :
 # 	[
 # 		{
 # 			"boundingbox_max" : [ 109.03180694580078, 88.123725891113281, 20.824602127075195 ],
@@ -66,9 +66,8 @@ o3d.visualization.draw_geometries( [o3d_pc])
 
 #     o3d.visualization.draw_geometries_with_animation_callback([pcd],
 #                                                               rotate_view)
-    
-# custom_draw_geometry_with_rotation(o3d_pc)
 
+# custom_draw_geometry_with_rotation(o3d_pc)
 
 
 # vis = o3d.visualization.Visualizer()

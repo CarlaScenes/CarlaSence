@@ -15,6 +15,12 @@ def saveAllSensors(out_root_folder, sensor_data, sensor_types):
         if(sensor_name.find('rgb_camera') != -1):
             saveRgbImage(sensor_data[i], os.path.join(out_root_folder, sensor_name))
 
+        if(sensor_name.find('dvs') != -1):
+            saveRgbImage(sensor_data[i], os.path.join(out_root_folder, sensor_name))
+
+        if(sensor_name.find('optical_flow') != -1):
+            saveRgbImage(sensor_data[i], os.path.join(out_root_folder, sensor_name))
+
         if(sensor_name.find('segmentation_camera') != -1):
             saveSegImage(sensor_data[i], os.path.join(out_root_folder, sensor_name))
 
@@ -71,6 +77,13 @@ def saveDepthImage(output, filepath):
         fp.writelines(str(output.transform) + "\n")
 
 def saveSegImage(output, filepath):
+    output.convert(carla.ColorConverter.CityScapesPalette)
+    output.save_to_disk(filepath + '/%05d'%output.frame)
+    with open(filepath + "/seg_camera_metadata.txt", 'a') as fp:
+        fp.writelines(str(output) + ", ")
+        fp.writelines(str(output.transform) + "\n")
+
+def saveDvsImage(output, filepath):
     output.convert(carla.ColorConverter.CityScapesPalette)
     output.save_to_disk(filepath + '/%05d'%output.frame)
     with open(filepath + "/seg_camera_metadata.txt", 'a') as fp:

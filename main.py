@@ -1,4 +1,5 @@
 import sys
+import subprocess
 import glob
 import shutil
 import os
@@ -15,7 +16,7 @@ from carla import Transform, Location, Rotation
 import argparse
 import logging
 from npc_spawning import spawnWalkers, spawnVehicles
-from configuration import attachSensorsToVehicle, SimulationParams, setupTrafficManager, setupWorld, createOutputDirectories, CarlaSyncMode
+from configuration import attachSensorsToVehicle, SimulationParams, setupTrafficManager, setupWorld, setupWorldWeather, createOutputDirectories, CarlaSyncMode
 import save_sensors
 import random
 import json
@@ -25,6 +26,7 @@ import os
 from os import path
 from ego_vehicle import EgoVehicle
 from utils.arg_parser import CommandLineArgsParser
+from utils.weather import weather_presets
 
 
 def main():
@@ -56,11 +58,18 @@ def main():
 
     world = client.get_world()
     avail_maps = client.get_available_maps()
-    # world = client.load_world(SimulationParams.town_map)
+    world = client.load_world(SimulationParams.town_map)
     blueprint_library = world.get_blueprint_library()
+
+    for name, value in weather_presets:
+        if name == args.weather:
+            SimulationParams.weather = value
+            break
 
     # Setup
     setupWorld(world)
+    if SimulationParams.weather is not None:
+        setupWorldWeather(world, SimulationParams.weather)
     setupTrafficManager(client)
 
     # Get all required blueprints
@@ -92,6 +101,8 @@ def main():
     print("Starting simulation...")
 
     k = 0
+    run_intersection = False
+
     try:
         with CarlaSyncMode(world, []) as sync_mode:
             while True:
@@ -99,6 +110,20 @@ def main():
                 if (k < SimulationParams.ignore_first_n_ticks):
                     k = k + 1
                     continue
+
+                # if run_intersection == False:
+                #     run_intersection = True
+                #     timeout_seconds = 120  # Change this to the desired timeout
+                #     try:
+                #         # Run the Python script with a timeout
+                #         subprocess.run(
+                #             ["python", "intersection-scenario.py"], check=True, timeout=timeout_seconds)
+                #     except subprocess.TimeoutExpired:
+                #         print(
+                #             f"Script exceeded the timeout of {timeout_seconds} seconds and was terminated.")
+                #     except subprocess.CalledProcessError as e:
+                #         print(f"Error running the script: {e}")
+
                 for i in range(len(egos)):
                     data = egos[i].getSensorData(frame_id)
 

@@ -5,7 +5,7 @@ import cv2
 image_dir = '/home/apg/manideep/carla/out/optical'
 
 # Output video filename
-output_video = 'optical.mp4'
+output_video = '/home/apg/manideep/carla/out/town5-optical.mp4'
 
 # Parameters for video frame size and frame rate
 frame_width = 1920
@@ -13,12 +13,15 @@ frame_height = 1280
 frame_rate = 10  # Frames per second
 
 # Get a list of image files in the directory
-image_files = [f for f in os.listdir(image_dir) if f.endswith(('.jpg', '.png'))]
+image_files = [f for f in os.listdir(
+    image_dir) if f.endswith(('.jpg', '.png'))]
 image_files.sort()  # Sort the files for correct sequence
+image_files = image_files[:1200]
 
 # Initialize OpenCV VideoWriter
 fourcc = cv2.VideoWriter_fourcc(*'mp4v')  # Use 'mp4v' codec for MP4
-out = cv2.VideoWriter(output_video, fourcc, frame_rate, (frame_width, frame_height))
+out = cv2.VideoWriter(output_video, fourcc, frame_rate,
+                      (frame_width, frame_height))
 
 # Loop through each image and create frames for the video
 for image_file in image_files:

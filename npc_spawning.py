@@ -38,12 +38,7 @@ def spawnVehicles(client, world, spawn_points, blueprintsVehicles, number):
                 spawn_point = random.choice(spawn_points)
                 batch.append(carla.command.SpawnActor(vehicle_bp, spawn_point).then(
                     carla.command.SetAutopilot(carla.command.FutureActor, True)))
-                
-        # for i in range(number):
-        #     spawn_point = random.choice(spawn_points)
-        #     vehicle_bp = world.get_blueprint_library().find(bp_name)
-        #     batch.append(carla.command.SpawnActor(vehicle_bp, spawn_point).then(
-        #         carla.command.SetAutopilot(carla.command.FutureActor, True)))
+
     results = client.apply_batch_sync(batch, True)
 
     all_id = [results[i].actor_id for i in range(len(results))]

@@ -18,6 +18,40 @@
             "image_size_y": 960
         },
         {
+            "type": "sensor.camera.dvs",
+            "role_name": "dvs",
+            "transform": [
+                {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 2.0,
+                    "roll": 0.0,
+                    "pitch": 0.0,
+                    "yaw": 0.0
+                }
+            ],
+            "fov": 100.0,
+            "image_size_x": 1280,
+            "image_size_y": 960
+        },
+        {
+            "type": "sensor.camera.optical_flow",
+            "role_name": "optical_flow",
+            "transform": [
+                {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 2.0,
+                    "roll": 0.0,
+                    "pitch": 0.0,
+                    "yaw": 0.0
+                }
+            ],
+            "fov": 100.0,
+            "image_size_x": 1280,
+            "image_size_y": 960
+        },
+        {
             "type": "sensor.camera.depth",
             "role_name": "depth_camera",
             "transform": [

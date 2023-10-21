@@ -9,6 +9,7 @@ import numpy as np
 
 class SimulationParams:
     town_map = None
+    weather = None
     num_of_walkers = None
     num_of_vehicles = None
     delta_seconds = None
@@ -198,6 +199,10 @@ def setupWorld(world):
     settings.synchronous_mode = True
     world.set_pedestrians_cross_factor(0.0)
     world.apply_settings(settings)
+
+
+def setupWorldWeather(world, weather):
+    world.set_weather(weather)
 
 # This will create the whole file system structure. It will create a separate folder for each sensor
 
