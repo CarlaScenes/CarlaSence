@@ -79,6 +79,9 @@ def attachSensorsToVehicle(world, data, vehicle_actor):
                 print("Problem with setting " + attr + "to " +
                       sensor[attr] + " in sensor " + sensor['type'])
 
+        # vehicle_transform = vehicle_actor.get_transform()
+        # roof_front_position = vehicle_transform.location + vehicle_transform.rotation.rotate(vehicle_actor.bounding_box.extent / 2 * carla.Vector3D(0.5, 0, 0.5))
+        # print(roof_front_position)
         sensor_actor = world.spawn_actor(
             bp, relative_transf, attach_to=vehicle_actor)
 

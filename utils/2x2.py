@@ -38,12 +38,15 @@ from moviepy.editor import VideoFileClip, clips_array
 # ]
 
 video_paths = [
-    "/home/apg/manideep/carla/out/town5-rgb.mp4",
-    "/home/apg/manideep/carla/out/town5-dvs.mp4",
-    "/home/apg/manideep/carla/out/town5-optical.mp4",
-    "/home/apg/manideep/carla/out/town5-is.mp4",
-    "/home/apg/manideep/carla/out/town5-ss.mp4",
+   "/home/apg/manideep/carla/out/optical_flow_camera-front-left.mp4",
+    "/home/apg/manideep/carla/out/optical_flow_camera-front.mp4",
+    "/home/apg/manideep/carla/out/optical_flow_camera-front-right.mp4",
+    "/home/apg/manideep/carla/out/optical_flow_camera-back-left.mp4",
+    "/home/apg/manideep/carla/out/optical_flow_camera-back.mp4",
+    "/home/apg/manideep/carla/out/optical_flow_camera-back-right.mp4"
 ]
+
+sensor = "optical_flow"
 
 
 # Load video clips
@@ -64,13 +67,13 @@ video_clips = [VideoFileClip(path) for path in video_paths]
 # Stack the clips in a 5x3 grid
 final_clip = clips_array([
 
-    [video_clips[0], video_clips[1], video_clips[2], video_clips[3], video_clips[4]]
-
+    [video_clips[0], video_clips[1], video_clips[2]],
+    [video_clips[3], video_clips[4], video_clips[5]],
 
 ])
 
 # Write the merged video to an output file
-final_clip.write_videofile("merged_video-cameras.mp4", codec='libx264')
+final_clip.write_videofile(f"{sensor}.mp4", codec='libx264')
 
 # Close video clips
 for clip in video_clips:

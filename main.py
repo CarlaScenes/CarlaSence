@@ -58,7 +58,7 @@ def main():
 
     world = client.get_world()
     avail_maps = client.get_available_maps()
-    world = client.load_world(SimulationParams.town_map)
+    # world = client.load_world(SimulationParams.town_map)
     blueprint_library = world.get_blueprint_library()
 
     for name, value in weather_presets:
@@ -109,6 +109,7 @@ def main():
                 frame_id = sync_mode.tick(timeout=5.0)
                 if (k < SimulationParams.ignore_first_n_ticks):
                     k = k + 1
+                    print(k)
                     continue
 
                 # if run_intersection == False:
