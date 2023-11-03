@@ -50,9 +50,12 @@ class EgoVehicle:
         q = queue.Queue()
         world.on_tick(q.put)
         self.queues.append(q)
+        self.sensor_q_map = {}
+        self.sensor_q_map[q] = None
         for sensor in self.sensors_ref:
             q = queue.Queue()
             sensor.listen(q.put)
+            self.sensor_q_map[q] = sensor
             self.queues.append(q)
 
         # TODO: Is threading necessary?
@@ -73,8 +76,11 @@ class EgoVehicle:
     def _retrieve_data(self, sensor_queue, frame_id):
         while True:
             data = sensor_queue.get(timeout=5.0)
+            sensor = None
+            if sensor_queue in self.sensor_q_map:
+                sensor = self.sensor_q_map[sensor_queue]
             if data.frame == frame_id:
-                return data
+                return (data,sensor, self.ego)
 
     def destroy(self):
         [s.destroy() for s in self.sensors_ref]

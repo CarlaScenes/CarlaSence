@@ -38,15 +38,15 @@ from moviepy.editor import VideoFileClip, clips_array
 # ]
 
 video_paths = [
-   "/home/apg/manideep/carla/out/optical_flow_camera-front-left.mp4",
-    "/home/apg/manideep/carla/out/optical_flow_camera-front.mp4",
-    "/home/apg/manideep/carla/out/optical_flow_camera-front-right.mp4",
-    "/home/apg/manideep/carla/out/optical_flow_camera-back-left.mp4",
-    "/home/apg/manideep/carla/out/optical_flow_camera-back.mp4",
-    "/home/apg/manideep/carla/out/optical_flow_camera-back-right.mp4"
+   "/home/apg/manideep/carla/out/rgb_camera-front-left.mp4",
+    "/home/apg/manideep/carla/out/rgb_camera-front.mp4",
+    "/home/apg/manideep/carla/out/rgb_camera-front-right.mp4",
+    "/home/apg/manideep/carla/out/rgb_camera-back-left.mp4",
+    "/home/apg/manideep/carla/out/rgb_camera-back.mp4",
+    "/home/apg/manideep/carla/out/rgb_camera-back-right.mp4"
 ]
 
-sensor = "optical_flow"
+sensor = "3dbb"
 
 
 # Load video clips

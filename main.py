@@ -8,6 +8,10 @@ try:
         sys.version_info.major,
         sys.version_info.minor,
         'win-amd64' if os.name == 'nt' else 'linux-x86_64'))[0])
+    print( glob.glob('./carla-*%d.%d-%s.egg' % (
+        sys.version_info.major,
+        sys.version_info.minor,
+        'win-amd64' if os.name == 'nt' else 'linux-x86_64') ) )
 except IndexError:
     pass
 
@@ -132,8 +136,11 @@ def main():
                         SimulationParams.data_output_subfolder, "ego" + str(i))
 
                     # save_sensors.saveAllSensors(output_folder, data, egos[i].sensor_types)
+                    
+                    print("----------------------------------------")
+
                     save_sensors.saveAllSensors(
-                        output_folder, data, egos[i].sensor_names)
+                        output_folder, data, egos[i].sensor_names, world)
 
                     control = egos[i].ego.get_control()
                     angle = control.steer

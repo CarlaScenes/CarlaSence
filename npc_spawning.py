@@ -1,6 +1,7 @@
 import carla
 import random
 import logging
+import math
 
 # @todo cannot import these directly.
 SpawnActor = carla.command.SpawnActor
@@ -11,18 +12,22 @@ FutureActor = carla.command.FutureActor
 
 def spawnVehicles(client, world, spawn_points, blueprintsVehicles, number):
     print("Spawning vehicles...")
-    customBp = [
-        'vehicle.kawasaki.ninja',
-        'vehicle.vespa.zx125',
-        'vehicle.audi.etron',
-        'vehicle.carlamotors.firetruck',
-        'vehicle.dodge.charger_police',
-        'vehicle.ford.ambulance',
-        'vehicle.tesla.model3',
-        'vehicle.harley-davidson.low_rider',
-        'vehicle.jeep.wrangler_rubicon',
-        'vehicle.tesla.cybertruck'
-    ]
+    # 'vehicle.kawasaki.ninja',
+    # 'vehicle.vespa.zx125',
+    # 'vehicle.harley-davidson.low_rider',
+
+    customBp = {
+        'vehicle.audi.etron': 20,
+        'vehicle.carlamotors.firetruck': 1,
+        'vehicle.ford.ambulance': 1,
+        'vehicle.dodge.charger_police': 10,
+        'vehicle.tesla.model3': 15,
+        'vehicle.jeep.wrangler_rubicon': 15,
+        'vehicle.ford.mustang': 18,
+        'vehicle.mercedes.coupe': 10,
+        'vehicle.mini.cooper_s': 10
+    }
+        
     batch = []
     if number < 10:
         for i in range(number):
@@ -31,9 +36,10 @@ def spawnVehicles(client, world, spawn_points, blueprintsVehicles, number):
             batch.append(carla.command.SpawnActor(vehicle_bp, spawn_point).then(
                 carla.command.SetAutopilot(carla.command.FutureActor, True)))
     else:
-        num_per_blueprint = number // len(customBp)
-        for bp_name in customBp:
-            vehicle_bp = world.get_blueprint_library().find(bp_name)
+        
+        for model, percentage in customBp.items():
+            num_per_blueprint = math.floor((number * percentage)/100) 
+            vehicle_bp = world.get_blueprint_library().find(model)
             for _ in range(num_per_blueprint):
                 spawn_point = random.choice(spawn_points)
                 batch.append(carla.command.SpawnActor(vehicle_bp, spawn_point).then(
