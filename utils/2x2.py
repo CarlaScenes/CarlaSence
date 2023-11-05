@@ -38,15 +38,15 @@ from moviepy.editor import VideoFileClip, clips_array
 # ]
 
 video_paths = [
-   "/home/apg/manideep/carla/out/rgb_camera-front-left.mp4",
-    "/home/apg/manideep/carla/out/rgb_camera-front.mp4",
-    "/home/apg/manideep/carla/out/rgb_camera-front-right.mp4",
-    "/home/apg/manideep/carla/out/rgb_camera-back-left.mp4",
-    "/home/apg/manideep/carla/out/rgb_camera-back.mp4",
-    "/home/apg/manideep/carla/out/rgb_camera-back-right.mp4"
+   "/home/apg/manideep/carla/out/rgb-front-left.mp4",
+    "/home/apg/manideep/carla/out/rgb-front.mp4",
+    "/home/apg/manideep/carla/out/rgb-front-right.mp4",
+    "/home/apg/manideep/carla/out/rgb-back-left.mp4",
+    "/home/apg/manideep/carla/out/rgb-back.mp4",
+    "/home/apg/manideep/carla/out/rgb-back-right.mp4"
 ]
 
-sensor = "3dbb"
+sensor = "rgb-full-sim"
 
 
 # Load video clips

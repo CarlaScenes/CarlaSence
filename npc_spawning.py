@@ -17,22 +17,24 @@ def spawnVehicles(client, world, spawn_points, blueprintsVehicles, number):
     # 'vehicle.harley-davidson.low_rider',
 
     customBp = {
-        'vehicle.audi.etron': 20,
         'vehicle.carlamotors.firetruck': 1,
         'vehicle.ford.ambulance': 1,
         'vehicle.dodge.charger_police': 10,
-        'vehicle.tesla.model3': 15,
+        'vehicle.tesla.model3': 35,
         'vehicle.jeep.wrangler_rubicon': 15,
         'vehicle.ford.mustang': 18,
         'vehicle.mercedes.coupe': 10,
         'vehicle.mini.cooper_s': 10
+        # 'vehicle.kawasaki.ninja': 50,
+        # 'vehicle.harley-davidson.low_rider': 25,
+        # 'vehicle.vespa.zx125': 25
     }
         
     batch = []
     if number < 10:
         for i in range(number):
             spawn_point = random.choice(spawn_points)
-            vehicle_bp = "vehicle.tesla.cybertruck"
+            vehicle_bp = "vehicle.tesla.model3"
             batch.append(carla.command.SpawnActor(vehicle_bp, spawn_point).then(
                 carla.command.SetAutopilot(carla.command.FutureActor, True)))
     else:
