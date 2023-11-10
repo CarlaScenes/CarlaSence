@@ -254,7 +254,6 @@ def saveAllSensors(out_root_folder, sensor_datas, sensor_types, world):
 
         if(sensor_name == 'sensor.lidar.ray_cast' or sensor_name == 'sensor.lidar.ray_cast_semantic' or sensor_name.find('lidar_64') != -1 or sensor_name.find('ray_cast_semantic') != -1):
             ray_cast[sensor_name] = sensor_data
-            print(sensor_name)
             if(sensor_name == 'lidar_64'):
                 saveLidar(sensor_data, os.path.join(out_root_folder, sensor_name))
     return
@@ -412,8 +411,12 @@ def save_coco_format(bounding_boxes, file_path, id, image_filename, image_w, ima
     with open(file_path, 'w') as file:
         json.dump(coco_data, file, indent=4)
 
+def save_kitti_3d_format(annotations, filepath):
+    with open(filepath, "w") as file:
+        for element in annotations:
+            file.write(str(element) + "\n")
 
-def saveRgbImage(output, filepath, world, sensor, vehicle, raycast_detection, raycast_detection2, instance_seg, dvs, depth):
+def saveRgbImage(output, filepath, world, sensor, ego_vehicle, raycast_detection, raycast_detection2, semantic_seg, dvs, depth):
     timestamp = output.timestamp
     try:
         # dvs_events = np.frombuffer(dvs.raw_data, dtype=np.dtype([
@@ -436,7 +439,18 @@ def saveRgbImage(output, filepath, world, sensor, vehicle, raycast_detection, ra
         array = np.frombuffer(depth.raw_data, dtype=np.dtype("uint8"))
         array = np.reshape(array, (depth.height, depth.width, 4))
         array = array[:, :, :3]
-        deptharray = array[:, :, ::-1]
+        array = array.astype(np.float32)
+        normalized_depth = np.dot(array, [65536.0, 256.0, 1.0])
+        normalized_depth /= 16777215.0  # (256.0 * 256.0 * 256.0 - 1.0)
+        deptharray = normalized_depth * 1000
+
+        # deptharray = array[:, :, ::-1]
+        # array = array.astype(np.float32)
+        # normalized_depth = np.dot(array, [65536.0, 256.0, 1.0])
+        # normalized_depth /= 16777215.0  # (256.0 * 256.0 * 256.0 - 1.0)
+        # depth = normalized_depth * 1000
+        
+        # deptharray = array[:, :, ::-1]
         # array = array.astype(np.float32)
         # normalized_depth = np.dot(array, [65536.0, 256.0, 1.0])
         # normalized_depth /= 16777215.0  # (256.0 * 256.0 * 256.0 - 1.0)
@@ -453,16 +467,13 @@ def saveRgbImage(output, filepath, world, sensor, vehicle, raycast_detection, ra
         # bounding_box_set = world.get_level_bbs(carla.CityObjectLabel.TrafficLight)
         # bounding_box_set.extend(world.get_level_bbs(carla.CityObjectLabel.TrafficSigns))
 
-        
-        
-
         # world_2_camera = np.array(sensor.get_transform().get_inverse_matrix())
         # K = build_projection_matrix(output.width, output.height, output.fov)
         img = np.frombuffer(output.raw_data, dtype=np.uint8).reshape(
         (output.height, output.width, 4))
 
-        instance_data = np.frombuffer(instance_seg.raw_data, dtype=np.uint8).reshape(
-        (instance_seg.height, instance_seg.width, 4))
+        instance_data = np.frombuffer(semantic_seg.raw_data, dtype=np.uint8).reshape(
+        (semantic_seg.height, semantic_seg.width, 4))
 
         # All labels in CityObjectLabel
         # ['Any', 'Bicycle', 'Bridge', 'Buildings', 'Bus', 'Car', 'Dynamic', 'Fences', 'Ground', 'GuardRail', 'Motorcycle', 'NONE', 'Other', 'Pedestrians', 'Poles', 'RailTrack', 'Rider', 'RoadLines', 'Roads', 'Sidewalks', 'Sky', 'Static', 'Terrain', 'TrafficLight', 'TrafficSigns', 'Train', 'Truck', 'Vegetation', 'Walls', 'Water', '__abs__', '__add__', '__and__', '__bool__', '__ceil__', '__class__', '__delattr__', '__dir__', '__divmod__', '__doc__', '__eq__', '__float__', '__floor__', '__floordiv__', '__format__', '__ge__', '__getattribute__', '__getnewargs__', '__gt__', '__hash__', '__index__', '__init__', '__init_subclass__', '__int__', '__invert__', '__le__', '__lshift__', '__lt__', '__mod__', '__module__', '__mul__', '__ne__', '__neg__', '__new__', '__or__', '__pos__', '__pow__', '__radd__', '__rand__', '__rdivmod__', '__reduce__', '__reduce_ex__', '__repr__', '__rfloordiv__', '__rlshift__', '__rmod__', '__rmul__', '__ror__', '__round__', '__rpow__', '__rrshift__', '__rshift__', '__rsub__', '__rtruediv__', '__rxor__', '__setattr__', '__sizeof__', '__slots__', '__str__', '__sub__', '__subclasshook__', '__truediv__', '__trunc__', '__xor__', 'bit_length', 'conjugate', 'denominator', 'from_bytes', 'imag', 'name', 'names', 'numerator', 'real', 'to_bytes', 'values']
@@ -536,19 +547,13 @@ def saveRgbImage(output, filepath, world, sensor, vehicle, raycast_detection, ra
         calibration[0, 2] = output.width / 2.0
         calibration[1, 2] = output.height / 2.0
         calibration[0, 0] = calibration[1, 1] = output.width / (2.0 * np.tan(output.fov * np.pi / 360.0))
-
+        kitti3dbb = []
+        kitti3dbbDVS = []
         # for vehicle in world.get_actors().filter("*vehicle*"):
             
 
         for vehicle in world.get_actors().filter("*vehicle*"):
             if vehicle.id in hit_actors:
-                try:
-                    create_kitti_datapoint(vehicle, sensor, calibration, img, deptharray, vehicle.get_transform())
-                    print("passed")
-                    pass
-                except Exception as error:
-                    print("An exception occurred in using kitti carla:", error)
-                    traceback.print_exc()
                 bounding_boxes = ClientSideBoundingBoxes.get_bounding_boxes([vehicle], sensor, output.height, output.width, output.fov)
                 for bbox in bounding_boxes:
                     points = [(int(bbox[i, 0]), int(bbox[i, 1])) for i in range(8)]
@@ -556,51 +561,16 @@ def saveRgbImage(output, filepath, world, sensor, vehicle, raycast_detection, ra
                     min_x, min_y, xdiff, ydiff = bounding_box
                     isDvs = is_dvs_event_inside_bbox(dvs_events, min_x, min_y, min_x + xdiff, min_y + ydiff)
                     center = get_bounding_box_center(bounding_box)
-                    # 2d bounding boxes
-                    # draw_bounding_box(img, bounding_box)
-                    # draw_bounding_box_corners(img, points)
-                    # draw_bounding_box_center(img, center)
-                    
-                    # print(mapping[vehicle.type])
+                    image, datapoint, camera_bbox = create_kitti_datapoint(vehicle, sensor, calibration, img, deptharray, ego_vehicle.get_transform(), bbox)
                     center_x, center_y = center
-                    if not (0 <= center_x < instance_data.shape[0] and 0 <= center_y < instance_data.shape[1]):
-                        pass
-                    else:
+                    if datapoint is not None:
+                        kitti3dbb.append(datapoint)
                         tag = instance_data[center_y,center_x, 2]
-                        if tag == 0:
+                        if tag == 0 :
                             rgbbb.append( (vehicle.id, vehicle.attributes.get('base_type'), ( min_x, min_y, min_x + xdiff, min_y + ydiff )) )
-                            # cv2.line(img, points[0], points[1], (0, 0, 255), 1)
-                            # cv2.line(img, points[0], points[1], (0, 0, 255), 1)
-                            # cv2.line(img, points[1], points[2], (0, 0, 255), 1)
-                            # cv2.line(img, points[2], points[3], (0, 0, 255), 1)
-                            # cv2.line(img, points[3], points[0], (0, 0, 255), 1)
-                            # cv2.line(img, points[4], points[5], (0, 0, 255), 1)
-                            # cv2.line(img, points[5], points[6], (0, 0, 255), 1)
-                            # cv2.line(img, points[6], points[7], (0, 0, 255), 1)
-                            # cv2.line(img, points[7], points[4], (0, 0, 255), 1)
-                            # cv2.line(img, points[0], points[4], (0, 0, 255), 1)
-                            # cv2.line(img, points[1], points[5], (0, 0, 255), 1)
-                            # cv2.line(img, points[2], points[6], (0, 0, 255), 1)
-                            # cv2.line(img, points[3], points[7], (0, 0, 255), 1)
                             if isDvs == True:
+                                kitti3dbbDVS.append(datapoint)
                                 dvsbb.append( (vehicle.id, vehicle.attributes.get('base_type'), ( min_x, min_y, min_x + xdiff, min_y + ydiff )) )
-                                # pygame.draw.line(surface, (0, 0, 255), points[0], points[1], 1)
-                                # pygame.draw.line(surface, (0, 0, 255), points[1], points[2], 1)
-                                # pygame.draw.line(surface, (0, 0, 255), points[2], points[3], 1)
-                                # pygame.draw.line(surface, (0, 0, 255), points[3], points[0], 1)
-                                # pygame.draw.line(surface, (0, 0, 255), points[4], points[5], 1)
-                                # pygame.draw.line(surface, (0, 0, 255), points[5], points[6], 1)
-                                # pygame.draw.line(surface, (0, 0, 255), points[6], points[7], 1)
-                                # pygame.draw.line(surface, (0, 0, 255), points[7], points[4], 1)
-                                # pygame.draw.line(surface, (0, 0, 255), points[0], points[4], 1)
-                                # pygame.draw.line(surface, (0, 0, 255), points[1], points[5], 1)
-                                # pygame.draw.line(surface, (0, 0, 255), points[2], points[6], 1)
-                                # pygame.draw.line(surface, (0, 0, 255), points[3], points[7], 1)
-                            else:
-                                print("no dvs it seems")
-                        else:
-                            pass
-                            # print("tag", tag, "did not detect as vehicle")
 
         for vehicle in world.get_actors().filter("*pedestrian*"):
             bounding_boxes = ClientSideBoundingBoxes.get_bounding_boxes([vehicle], sensor, output.height, output.width, output.fov)
@@ -608,46 +578,18 @@ def saveRgbImage(output, filepath, world, sensor, vehicle, raycast_detection, ra
                 points = [(int(bbox[i, 0]), int(bbox[i, 1])) for i in range(8)]
                 bounding_box = get_2d_bounding_box(np.array(points, dtype=np.int32))
                 center = get_bounding_box_center(bounding_box)
-                # 2d bounding boxes
-                # draw_bounding_box(img, bounding_box)
-                # draw_bounding_box_corners(img, points)
-                # draw_bounding_box_center(img, center)
                 min_x, min_y, xdiff, ydiff = bounding_box
+                image, datapoint, camera_bbox = create_kitti_datapoint(vehicle, sensor, calibration, img, deptharray, ego_vehicle.get_transform(), bbox)
                 isDvs = is_dvs_event_inside_bbox(dvs_events, min_x, min_y, min_x + xdiff, min_y + ydiff)
                 center_x, center_y = center
-                if not (0 <= center_x < instance_data.shape[0] and 0 <= center_y < instance_data.shape[1]):
-                    pass
-                else:
+                if datapoint is not None:
+                    kitti3dbb.append(datapoint)
                     tag = instance_data[center_y,center_x, 2]
                     if tag == 220:
                         rgbbb.append( (vehicle.id, 'pedestrian', ( min_x, min_y, min_x + xdiff, min_y + ydiff )) )
-                        # cv2.line(img, points[0], points[1], (0, 255, 0), 1)
-                        # cv2.line(img, points[0], points[1], (0, 255, 0), 1)
-                        # cv2.line(img, points[1], points[2], (0, 255, 0), 1)
-                        # cv2.line(img, points[2], points[3], (0, 255, 0), 1)
-                        # cv2.line(img, points[3], points[0], (0, 255, 0), 1)
-                        # cv2.line(img, points[4], points[5], (0, 255, 0), 1)
-                        # cv2.line(img, points[5], points[6], (0, 255, 0), 1)
-                        # cv2.line(img, points[6], points[7], (0, 255, 0), 1)
-                        # cv2.line(img, points[7], points[4], (0, 255, 0), 1)
-                        # cv2.line(img, points[0], points[4], (0, 255, 0), 1)
-                        # cv2.line(img, points[1], points[5], (0, 255, 0), 1)
-                        # cv2.line(img, points[2], points[6], (0, 255, 0), 1)
-                        # cv2.line(img, points[3], points[7], (0, 255, 0), 1)
                         if isDvs == True:
+                            kitti3dbbDVS.append(datapoint)
                             dvsbb.append( (vehicle.id, 'pedestrian', ( min_x, min_y, min_x + xdiff, min_y + ydiff )) )
-                            # pygame.draw.line(surface, (0, 0, 255), points[0], points[1], 1)
-                            # pygame.draw.line(surface, (0, 0, 255), points[1], points[2], 1)
-                            # pygame.draw.line(surface, (0, 0, 255), points[2], points[3], 1)
-                            # pygame.draw.line(surface, (0, 0, 255), points[3], points[0], 1)
-                            # pygame.draw.line(surface, (0, 0, 255), points[4], points[5], 1)
-                            # pygame.draw.line(surface, (0, 0, 255), points[5], points[6], 1)
-                            # pygame.draw.line(surface, (0, 0, 255), points[6], points[7], 1)
-                            # pygame.draw.line(surface, (0, 0, 255), points[7], points[4], 1)
-                            # pygame.draw.line(surface, (0, 0, 255), points[0], points[4], 1)
-                            # pygame.draw.line(surface, (0, 0, 255), points[1], points[5], 1)
-                            # pygame.draw.line(surface, (0, 0, 255), points[2], points[6], 1)
-                            # pygame.draw.line(surface, (0, 0, 255), points[3], points[7], 1)
 
         output_file = os.path.join(
         filepath, f'{output.frame}.png')
@@ -666,6 +608,9 @@ def saveRgbImage(output, filepath, world, sensor, vehicle, raycast_detection, ra
 
         save_coco_format(dvsbb, os.path.join(
         filepath, f'dvs-{output.frame}.json'), output.frame, f'dvs-{output.frame}.png', output.width, output.height)
+
+        save_kitti_3d_format(kitti3dbb, os.path.join(filepath, f'{output.frame}.txt'))
+        save_kitti_3d_format(kitti3dbbDVS, os.path.join(filepath, f'dvs-{output.frame}.txt'))
 
     except Exception as error:
         # handle the exception

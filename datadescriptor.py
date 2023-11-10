@@ -165,6 +165,7 @@ class KittiDescriptor:
         self._valid_classes = ['Car', 'Van', 'Truck',
                                'Pedestrian', 'Person_sitting', 'Cyclist', 'Tram',
                                'Misc', 'DontCare']
+        self.object_id = 0
 
     def set_type(self, obj_type: str):
         assert obj_type in self._valid_classes, "Object must be of types {}".format(
@@ -190,6 +191,10 @@ class KittiDescriptor:
         assert len(bbox) == 4, """ Bbox must be 2D bounding box of object in the image (0-based index):
                      contains left, top, right, bottom pixel coordinates (two points)"""
         self.bbox = bbox
+
+    def set_object_id(self, object_id):
+        assert object_id > 0, """ Object Id is > 0 """
+        self.object_id = object_id
 
     def set_3d_object_dimensions(self, bbox_extent):
         # Bbox extent consists of x,y and z.
@@ -250,4 +255,4 @@ class KittiDescriptor:
         else:
             bbox_format = " ".join([str(x) for x in self.bbox])
 
-        return "{} {} {} {} {} {} {} {}".format(self.type, self.truncated, self.occluded, self.alpha, bbox_format, self.dimensions, self.location, self.rotation_y)
+        return "{} {} {} {} {} {} {} {} {}".format(self.type, self.truncated, self.occluded, self.alpha, bbox_format, self.dimensions, self.location, self.rotation_y, self.object_id)

@@ -162,7 +162,6 @@ class ClientSideBoundingBoxes(object):
     @staticmethod
     def _bounding_box_to_world(bbox):
         extent = bbox.extent
-        print(extent)
         cords = np.zeros((8, 4))
         cords[0, :] = np.array([extent.x, extent.y, -extent.z, 1])
         cords[1, :] = np.array([-extent.x, extent.y, -extent.z, 1])
@@ -257,7 +256,7 @@ def get_bounding_box_and_refpoint(agent, camera, camera_calibration):
     return (camera_bbox, camera_refpoint), (sensor_bbox, sensor_refpoint)
 
 
-def create_kitti_datapoint(agent, camera, cam_calibration, image, depth_map, player_transform, max_render_depth=70):
+def create_kitti_datapoint(agent, camera, cam_calibration, image, depth_map, player_transform, bb, max_render_depth=1000):
     """
     Calculates the bounding box of the given agent, and
     returns a KittiDescriptor which describes the object to be labeled
@@ -271,14 +270,12 @@ def create_kitti_datapoint(agent, camera, cam_calibration, image, depth_map, pla
         return image, None
 
     (camera_bbox, camera_refpoint), (sensor_bbox, sensor_refpoint) = get_bounding_box_and_refpoint(agent, camera, cam_calibration)
-
+    
     num_visible_vertices, num_vertices_outside_camera = calculate_occlusion_stats(image,
-                                                                                  camera_bbox,
+                                                                                  bb,
                                                                                   depth_map,
                                                                                   max_render_depth,
                                                                                   draw_vertices=False)
-    
-    print(num_visible_vertices, num_vertices_outside_camera)
 
     # At least N vertices has to be visible in order to draw bbox
     if num_visible_vertices >= MIN_VISIBLE_VERTICES_FOR_RENDER > num_vertices_outside_camera:
@@ -311,8 +308,7 @@ def create_kitti_datapoint(agent, camera, cam_calibration, image, depth_map, pla
         datapoint.set_alpha(alpha)
         datapoint.set_truncated(truncation)
         datapoint.set_occlusion(occlusion)
-
-        print(datapoint)
+        datapoint.set_object_id(agent.id)
 
         return image, datapoint, camera_bbox
     else:
@@ -380,7 +376,6 @@ def get_alpha(agent, player_transform):
     target_vector = agent_location - vehicle_location
     target_vector_numpy = np.array([target_vector.x, target_vector.y, target_vector.z])
     norm_target = np.linalg.norm(target_vector_numpy)
-
     #fix rounding errors of dot product (can only range between -1 and 1 for normalized vectors)
     dot_prod = np.dot(forward_vector_numpy, target_vector_numpy) / norm_target
     if dot_prod > 1:
@@ -391,7 +386,6 @@ def get_alpha(agent, player_transform):
     # check https://github.com/traveller59/second.pytorch/issues/98
     # and https://arxiv.org/pdf/1904.12681.pdf (supplementary material), here theta = theta ray
     theta = math.degrees(math.acos(dot_prod))
-
     rot_agent = agent.get_transform().rotation.yaw
     rot_vehicle = player_transform.rotation.yaw
     # rotate by -90 to match kitti

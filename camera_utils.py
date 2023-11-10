@@ -102,6 +102,7 @@ def point_is_occluded(point, vertex_depth, depth_map):
     for dy, dx in neigbours:
         if point_in_canvas((dy+y, dx+x)):
             # If the depth map says the pixel is closer to the camera than the actual vertex
+            # print(depth_map[y+dy, x+dx], 'depth map', vertex_depth, 'vertex_depth')
             if np.any(depth_map[y+dy, x+dx] < vertex_depth):
                 is_occluded.append(True)
             else:
