@@ -2,21 +2,21 @@ import os
 import cv2
 
 # Directory containing the images
-image_dir = '/home/apg/manideep/carla/out/Town10HD_Opt_03_11_2023_20_09_16/ego0/rgb_camera-back-left'
+image_dir = '/home/apg/manideep/carla/out/Town10HD_Opt_08_11_2023_11_41_47/ego0/rgb_camera-front'
 
 # Output video filename
-output_video = '/home/apg/manideep/carla/out/rgb-back-left.mp4'
+output_video = '/home/apg/manideep/carla/out/bike-rgb.mp4'
 
 # Parameters for video frame size and frame rate
 frame_width = 1280
 frame_height = 960
-frame_rate = 20  # Frames per second
+frame_rate = 1  # Frames per second
 
 # Get a list of image files in the directory
 image_files = [f for f in os.listdir(
     image_dir) if f.endswith(('.jpg', '.png'))]
 image_files.sort()  # Sort the files for correct sequence
-image_files = image_files[:5000]
+image_files = image_files[:5]
 
 # Initialize OpenCV VideoWriter
 fourcc = cv2.VideoWriter_fourcc(*'mp4v')  # Use 'mp4v' codec for MP4

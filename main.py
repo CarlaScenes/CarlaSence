@@ -61,8 +61,33 @@ def main():
     SimulationParams.debug = args.debug
 
     world = client.get_world()
+
     avail_maps = client.get_available_maps()
     # world = client.load_world(SimulationParams.town_map)
+
+    # Remove all parked vehicles etc.
+    env_objs = world.get_environment_objects(carla.CityObjectLabel.Car)
+    for i in range (0, len(env_objs)):
+        world.enable_environment_objects({env_objs[i].id}, False)
+    env_objs = world.get_environment_objects(carla.CityObjectLabel.Bicycle)
+    for i in range (0, len(env_objs)):
+        world.enable_environment_objects({env_objs[i].id}, False)
+    env_objs = world.get_environment_objects(carla.CityObjectLabel.Bus)
+    for i in range (0, len(env_objs)):
+        world.enable_environment_objects({env_objs[i].id}, False)
+    env_objs = world.get_environment_objects(carla.CityObjectLabel.Motorcycle)
+    for i in range (0, len(env_objs)):
+        world.enable_environment_objects({env_objs[i].id}, False)
+    env_objs = world.get_environment_objects(carla.CityObjectLabel.Pedestrians)
+    for i in range (0, len(env_objs)):
+        world.enable_environment_objects({env_objs[i].id}, False)
+    env_objs = world.get_environment_objects(carla.CityObjectLabel.Train)
+    for i in range (0, len(env_objs)):
+        world.enable_environment_objects({env_objs[i].id}, False)
+    env_objs = world.get_environment_objects(carla.CityObjectLabel.Truck)
+    for i in range (0, len(env_objs)):
+        world.enable_environment_objects({env_objs[i].id}, False)
+
     blueprint_library = world.get_blueprint_library()
 
     for name, value in weather_presets:

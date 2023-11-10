@@ -347,6 +347,8 @@ def main(args):
     data = read_imu(args.path_to_carla + "imu/imu.txt", args.frames)
     data["gnss_coordinates"] = read_gnss(args.path_to_carla + "gnss/gnss.txt", args.frames)
 
+
+
     if eval(args.ignore_frames) is not None:
         data["frames"] = data["frames"][int(args.ignore_frames):]
         data["timestamps"] = data["timestamps"][int(args.ignore_frames):]
@@ -383,7 +385,7 @@ def main(args):
 
         # copy rgb_camera
         if (eval(args.frames) is None) and (eval(args.ignore_frames) is None):
-            copy_tree(os.path.join(args.path_to_carla, "rgb_camera/"), os.path.join(args.path_to_carla,
+            copy_tree(os.path.join(args.path_to_carla, "rgb_camera-front/"), os.path.join(args.path_to_carla,
                                                                                     args.date + "/" + args.date + "_drive_" + args.seq + "_sync/image_00/data/"))
         else:
             if (os.path.exists(os.path.join(args.path_to_carla,
@@ -397,17 +399,17 @@ def main(args):
                                       args.date + "/" + args.date + "_drive_" + args.seq + "_sync/image_00/data/"))
 
             if (eval(args.ignore_frames) is not None) and (eval(args.frames) is None):
-                cmd = 'cd ' + os.path.join(args.path_to_carla, "rgb_camera/") + ' && cp $(ls | tail -n +' + str(
+                cmd = 'cd ' + os.path.join(args.path_to_carla, "rgb_camera-front/") + ' && cp $(ls | tail -n +' + str(
                     int(args.ignore_frames) + 1) + ') ' + os.path.join(args.path_to_carla,
                                                                        args.date + "/" + args.date + "_drive_" + args.seq + "_sync/image_00/data/")
 
             if (eval(args.ignore_frames) is None) and (eval(args.frames) is not None):
-                cmd = 'cd ' + os.path.join(args.path_to_carla, "rgb_camera/") + ' && cp $(ls | head -n ' + str(
+                cmd = 'cd ' + os.path.join(args.path_to_carla, "rgb_camera-front/") + ' && cp $(ls | head -n ' + str(
                     args.frames) + ') ' + os.path.join(args.path_to_carla,
                                                        args.date + "/" + args.date + "_drive_" + args.seq + "_sync/image_00/data/")
 
             if (eval(args.ignore_frames) is not None) and (eval(args.frames) is not None):
-                cmd = 'cd ' + os.path.join(args.path_to_carla, "rgb_camera/") + ' && cp $(ls | tail -n +' + str(
+                cmd = 'cd ' + os.path.join(args.path_to_carla, "rgb_camera-front/") + ' && cp $(ls | tail -n +' + str(
                     int(args.ignore_frames) + 1) + ' | head -n ' + str(
                     int(args.frames) - int(args.ignore_frames)) + ') ' + os.path.join(args.path_to_carla,
                                                                                       args.date + "/" + args.date + "_drive_" + args.seq + "_sync/image_00/data/")
@@ -459,11 +461,18 @@ def main(args):
 
             if (eval(args.ignore_frames) is not None) and (eval(args.frames) is not None):
                 if eval(args.semantic_lidar) == False:
-                    cmd = 'cd ' + os.path.join(args.path_to_carla,
-                                               "lidar_" + args.channels + "/") + ' && cp $(ls | tail -n +' + str(
-                        int(args.ignore_frames) + 1) + ' | head -n ' + str(
-                        int(args.frames) - int(args.ignore_frames)) + ') ' + os.path.join(args.path_to_carla,
-                                                                                          args.date + "/" + args.date + "_drive_" + args.seq + "_sync/velodyne_points/data/")
+                    cmd =  (
+                        'cd ' + 
+                        os.path.join(args.path_to_carla, "lidar_" + str(args.channels) + "/") + 
+                        ' && cp $(ls | tail -n +' + 
+                        str( int(args.ignore_frames) + 1) 
+                        + ' | head -n ' + str(
+                        int(args.frames) - int(args.ignore_frames)) 
+                    )
+                    
+                    
+                    # + ') ' + os.path.join(args.path_to_carla,
+                    #                                                                       args.date + "/" + args.date + "_drive_" + args.seq + "_sync/velodyne_points/data/")
                 else:
                     cmd = 'cd ' + os.path.join(args.path_to_carla,
                                                "sem_lidar_" + args.channels + "/") + ' && cp $(ls | tail -n +' + str(
@@ -473,22 +482,22 @@ def main(args):
 
             os.system(cmd)
 
-        store_timestamp(data["timestamps"], os.path.join(args.path_to_carla,
-                                                         args.date + "/" + args.date + "_drive_" + args.seq + "_sync/velodyne_points/"))
+        # store_timestamp(data["timestamps"], os.path.join(args.path_to_carla,
+        #                                                  args.date + "/" + args.date + "_drive_" + args.seq + "_sync/velodyne_points/"))
 
         # copy calibration matrices
-        copy(os.path.join(args.path_to_carla, "calib_cam_to_cam.txt"), os.path.join(args.path_to_carla, args.date))
-        copy(os.path.join(args.path_to_carla, "calib_imu_to_velo.txt"), os.path.join(args.path_to_carla, args.date))
-        copy(os.path.join(args.path_to_carla, "calib_velo_to_cam.txt"), os.path.join(args.path_to_carla, args.date))
-        copy(os.path.join(args.path_to_carla, "calib_velo_to_world.txt"), os.path.join(args.path_to_carla, args.date))
+        # copy(os.path.join(args.path_to_carla, "calib_cam_to_cam.txt"), os.path.join(args.path_to_carla, args.date))
+        # copy(os.path.join(args.path_to_carla, "calib_imu_to_velo.txt"), os.path.join(args.path_to_carla, args.date))
+        # copy(os.path.join(args.path_to_carla, "calib_velo_to_cam.txt"), os.path.join(args.path_to_carla, args.date))
+        # copy(os.path.join(args.path_to_carla, "calib_velo_to_world.txt"), os.path.join(args.path_to_carla, args.date))
 
         # store timestamps for all sensors
-        store_timestamp(data["timestamps"], os.path.join(args.path_to_carla,
-                                                         args.date + "/" + args.date + "_drive_" + args.seq + "_sync" + "/velodyne_points/"))
-        store_timestamp(data["timestamps"], os.path.join(args.path_to_carla,
-                                                         args.date + "/" + args.date + "_drive_" + args.seq + "_sync" + "/image_00/"))
-        store_timestamp(data["timestamps"], os.path.join(args.path_to_carla,
-                                                         args.date + "/" + args.date + "_drive_" + args.seq + "_sync" + "/oxts/"))
+        # store_timestamp(data["timestamps"], os.path.join(args.path_to_carla,
+        #                                                  args.date + "/" + args.date + "_drive_" + args.seq + "_sync" + "/velodyne_points/"))
+        # store_timestamp(data["timestamps"], os.path.join(args.path_to_carla,
+        #                                                  args.date + "/" + args.date + "_drive_" + args.seq + "_sync" + "/image_00/"))
+        # store_timestamp(data["timestamps"], os.path.join(args.path_to_carla,
+                                                        #  args.date + "/" + args.date + "_drive_" + args.seq + "_sync" + "/oxts/"))
 
         # visualize trajectory
         # visualize(data["locations"])
