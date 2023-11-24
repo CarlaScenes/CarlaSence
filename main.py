@@ -29,6 +29,7 @@ import queue
 import os
 from os import path
 from ego_vehicle import EgoVehicle
+from fixed_perception import FixedPerception
 from utils.arg_parser import CommandLineArgsParser
 from utils.weather import weather_presets
 
@@ -110,13 +111,26 @@ def main():
     lidar_segment_bp = blueprint_library.find('sensor.lidar.ray_cast_semantic')
 
     egos = []
-    for i in range(SimulationParams.number_of_ego_vehicles):
-        egos.append(EgoVehicle(
-            SimulationParams.sensor_json_filepath[i], None, world, args))
+    fixed = []
+    # for i in range(SimulationParams.number_of_ego_vehicles):
+    #     egos.append(EgoVehicle(
+    #         SimulationParams.sensor_json_filepath[i], None, world, args))
+        
+    with open(SimulationParams.fixed_perception_sensor_locations_json_filepath, 'r') as json_file:
+        sensor_locations = json.load(json_file)
+
+    map_name = world.get_map().name
+    
+    for config_entry in sensor_locations:
+        if config_entry["town"] == map_name:
+            for coordinate in config_entry["cordinates"]:
+                fixed.append(FixedPerception(SimulationParams.fixed_perception_sensor_json_filepath, None, world, args, coordinate) )
 
     # Spawn npc actors
     w_all_actors, w_all_id = spawnWalkers(
         client, world, blueprintsWalkers, SimulationParams.num_of_walkers)
+    # w_all_actors = []
+    # w_all_id = []
     v_all_actors, v_all_id = spawnVehicles(
         client, world, vehicles_spawn_points, blueprintsVehicles, SimulationParams.num_of_vehicles)
     world.tick()
@@ -141,47 +155,31 @@ def main():
                     print(k)
                     continue
 
-                # if run_intersection == False:
-                #     run_intersection = True
-                #     timeout_seconds = 120  # Change this to the desired timeout
-                #     try:
-                #         # Run the Python script with a timeout
-                #         subprocess.run(
-                #             ["python", "intersection-scenario.py"], check=True, timeout=timeout_seconds)
-                #     except subprocess.TimeoutExpired:
-                #         print(
-                #             f"Script exceeded the timeout of {timeout_seconds} seconds and was terminated.")
-                #     except subprocess.CalledProcessError as e:
-                #         print(f"Error running the script: {e}")
+                # for i in range(len(egos)):
+                #     data = egos[i].getSensorData(frame_id)
 
-                for i in range(len(egos)):
-                    data = egos[i].getSensorData(frame_id)
+                #     output_folder = os.path.join(
+                #         SimulationParams.data_output_subfolder, "ego" + str(i))
 
+                #     print("- ego - vehcile -")
+
+                #     save_sensors.saveAllSensors(
+                #         output_folder, data, egos[i].sensor_names, world)
+
+                #     control = egos[i].ego.get_control()
+                #     angle = control.steer
+                #     save_sensors.saveSteeringAngle(angle, output_folder)
+
+                print("- fixed - perception -")
+
+                for i in range(len(fixed)):
+
+                    data = fixed[i].getSensorData(frame_id)
                     output_folder = os.path.join(
-                        SimulationParams.data_output_subfolder, "ego" + str(i))
-
-                    # save_sensors.saveAllSensors(output_folder, data, egos[i].sensor_types)
-                    
-                    print("----------------------------------------")
+                        SimulationParams.data_output_subfolder, "fixed-" + str(i+1))
 
                     save_sensors.saveAllSensors(
-                        output_folder, data, egos[i].sensor_names, world)
-
-                    control = egos[i].ego.get_control()
-                    angle = control.steer
-                    save_sensors.saveSteeringAngle(angle, output_folder)
-
-                    # TODO: move output data to desired folder. Is this really necessary?
-                    # if (frame_id > 1000):
-                    #     destination_folder = None
-                    #     if len(sys.argv[1:]) == 1:
-                    #         assert path.exists(str(sys.argv[1:][0])), "Path does not exist"
-                    #         destination_folder = sys.argv[1:][0]
-                    #
-                    #     # move generated data to other folder
-                    #     if (destination_folder is not None):
-                    #         shutil.move(SimulationParams.data_output_subfolder, destination_folder)
-                    #     return
+                        output_folder, data, fixed[i].sensor_names, world)
 
                 print("new frame!")
     finally:

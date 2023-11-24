@@ -1,0 +1,58 @@
+[
+    {
+        "type": "sensor.lidar.ray_cast_semantic",
+        "range": 1000,
+        "channels": 64,
+        "points_per_second": 3000000,
+        "upper_fov": 30.0,
+        "lower_fov": -60,
+        "horizontal_fov": 360,
+        "rotation_frequency": 60
+    },
+    {
+        "type": "sensor.lidar.ray_cast_semantic",
+        "range": 1000,
+        "channels": 64,
+        "points_per_second": 3000000,
+        "upper_fov": 50.0,
+        "lower_fov": -50,
+        "horizontal_fov": 360,
+        "rotation_frequency": 90
+    },
+    {
+        "type": "sensor.camera.semantic_segmentation",
+        "fov": 70.0,
+        "image_size_x": 1280,
+        "image_size_y": 960
+    },
+    {
+        "type": "sensor.camera.instance_segmentation",
+        "fov": 70.0,
+        "image_size_x": 1280,
+        "image_size_y": 960
+    },
+    {
+        "type": "sensor.camera.dvs",
+        "fov": 70.0,
+        "image_size_x": 1280,
+        "image_size_y": 960
+    },
+    {
+        "type": "sensor.camera.optical_flow",
+        "fov": 70.0,
+        "image_size_x": 1280,
+        "image_size_y": 960
+    },
+    {
+        "type": "sensor.camera.depth",
+        "fov": 70.0,
+        "image_size_x": 1280,
+        "image_size_y": 960
+    },
+    {
+        "type": "sensor.camera.rgb",
+        "fov": 70.0,
+        "image_size_x": 1280,
+        "image_size_y": 960
+    }
+]

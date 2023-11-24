@@ -1,7 +1,5 @@
 import os
 import carla
-# from carla import ColorConverter
-from carla import ColorConverter as cc
 import numpy as np
 import pygame
 import cv2
@@ -199,11 +197,20 @@ class ClientSideBoundingBoxes(object):
 edges = [[0,1], [1,3], [3,2], [2,0], [0,4], [4,5], [5,1], [5,7], [7,6], [6,4], [6,2], [7,3]]
 
 def saveAllSensors(out_root_folder, sensor_datas, sensor_types, world):
+    print("saveAllSensors")
+    # try:
+    #     print("in here")
+    #     (sensor_data, sensor, vehicle) = sensor_datas[0]
+    # except:
+    # try:
+    #     print("in here ??")
+    #     (sensor_data, sensor) = sensor_datas[0]
+    # except Exception as error:
+    #             print("An exception occurred in rgb_camera:", error)
+    #             traceback.print_exc()
 
-    #TODO have it find the snapshot object dynamically instead of using the hardcoded 0 index
-    (sensor_data, sensor, vehicle) = sensor_datas[0]
-    saveSnapshot(out_root_folder, sensor_data)
-    sensor_datas.pop(0)
+    # saveSnapshot(out_root_folder, sensor_data)
+    # sensor_datas.pop(0)
 
     dvs_camera = {}
     rgb_camera = {}
@@ -212,12 +219,21 @@ def saveAllSensors(out_root_folder, sensor_datas, sensor_types, world):
     ray_cast = {}
 
     for i in range(len(sensor_datas)):
-        (sensor_data, sensor, vehicle) = sensor_datas[i]
+        print("in here 1 ")
+        # try:
+        #     print("in here 2 ")
+        #     (sensor_data, sensor, vehicle) = sensor_datas[i]
+        try:
+            print("in here 3")
+            (sensor_data, sensor) = sensor_datas[i]
+            vehicle = None
+        except Exception as error:
+            print("An exception occurred in rgb_camera:", error)
+            traceback.print_exc()
         sensor_name = sensor_types[i]
         
         if(sensor_name.find('dvs') != -1):
             dvs_camera[sensor_name] = sensor_data
-            # dvs_callback(sensor_data, os.path.join(out_root_folder, sensor_name))
 
         if(sensor_name.find('optical_flow') != -1):
             optical_camera_callback(sensor_data, os.path.join(out_root_folder, sensor_name))
@@ -238,10 +254,9 @@ def saveAllSensors(out_root_folder, sensor_datas, sensor_types, world):
             try:
                 rgb_camera[sensor_name] = (sensor_data[i], os.path.join(out_root_folder, sensor_name))
                 ray_cast_sensor = sensor_name.replace("rgb_camera", "ray_cast_semantic")
-                semantic = sensor_name.replace("rgb", "semantic_segmentation")
                 dvs = sensor_name.replace("rgb", "dvs")
                 depth = sensor_name.replace("rgb", "depth")
-                saveRgbImage(sensor_data, os.path.join(out_root_folder, sensor_name), world, sensor, vehicle, ray_cast[ray_cast_sensor], ray_cast[f"{ray_cast_sensor}-2"], sematic_seg_camera[semantic], dvs_camera[dvs], depth_camera[depth])
+                saveRgbImage(sensor_data, os.path.join(out_root_folder, sensor_name), world, sensor, vehicle, ray_cast[ray_cast_sensor], ray_cast[f"{ray_cast_sensor}-2"], dvs_camera[dvs], depth_camera[depth])
             except Exception as error:
                 print("An exception occurred in rgb_camera:", error)
                 traceback.print_exc()
@@ -253,6 +268,7 @@ def saveAllSensors(out_root_folder, sensor_datas, sensor_types, world):
             saveGnss(sensor_data, os.path.join(out_root_folder, sensor_name), sensor_name)
 
         if(sensor_name == 'sensor.lidar.ray_cast' or sensor_name == 'sensor.lidar.ray_cast_semantic' or sensor_name.find('lidar_64') != -1 or sensor_name.find('ray_cast_semantic') != -1):
+            print("ray cast black")
             ray_cast[sensor_name] = sensor_data
             if(sensor_name == 'lidar_64'):
                 saveLidar(sensor_data, os.path.join(out_root_folder, sensor_name))
@@ -292,24 +308,13 @@ def build_projection_matrix(w, h, fov):
     return K
 
 def get_image_point(loc, K, w2c):
-    # Calculate 2D projection of 3D coordinate
-
-    # Format the input coordinate (loc is a carla.Position object)
     point = np.array([loc.x, loc.y, loc.z, 1])
-    # transform to camera coordinates
     point_camera = np.dot(w2c, point)
-
-    # New we must change from UE4's coordinate system to an "standard"
-    # (x, y ,z) -> (y, -z, x)
-    # and we remove the fourth componebonent also
     point_camera = [point_camera[1], -point_camera[2], point_camera[0]]
 
-    # now project 3D->2D using the camera matrix
     point_img = np.dot(K, point_camera)
-    # normalize
     point_img[0] /= point_img[2]
     point_img[1] /= point_img[2]
-
     return point_img[0:2]
 
 def get_2d_bounding_box(points):
@@ -416,7 +421,7 @@ def save_kitti_3d_format(annotations, filepath):
         for element in annotations:
             file.write(str(element) + "\n")
 
-def saveRgbImage(output, filepath, world, sensor, ego_vehicle, raycast_detection, raycast_detection2, semantic_seg, dvs, depth):
+def saveRgbImage(output, filepath, world, sensor, ego_vehicle, raycast_detection, raycast_detection2, dvs, depth):
     try:
         dvs_events = np.frombuffer(dvs.raw_data, dtype=np.dtype([
             ('x', np.uint16), ('y', np.uint16), ('t', np.int64), ('pol', np.bool)
@@ -428,8 +433,6 @@ def saveRgbImage(output, filepath, world, sensor, ego_vehicle, raycast_detection
                 ['x'], dvs_events2[:]['pol'] * 2] = 255
         surface = pygame.surfarray.make_surface(dvs_img.swapaxes(0, 1))
 
-        # color_converter = cc.Depth
-        # depth.convert(color_converter)
         array = np.frombuffer(depth.raw_data, dtype=np.dtype("uint8"))
         array = np.reshape(array, (depth.height, depth.width, 4))
         array = array[:, :, :3]
@@ -450,9 +453,6 @@ def saveRgbImage(output, filepath, world, sensor, ego_vehicle, raycast_detection
         img = np.frombuffer(output.raw_data, dtype=np.uint8).reshape(
         (output.height, output.width, 4))
 
-        instance_data = np.frombuffer(semantic_seg.raw_data, dtype=np.uint8).reshape(
-        (semantic_seg.height, semantic_seg.width, 4))
-
         # All labels in CityObjectLabel
         # ['Any', 'Bicycle', 'Bridge', 'Buildings', 'Bus', 'Car', 'Dynamic', 'Fences', 'Ground', 'GuardRail', 'Motorcycle', 'NONE', 'Other', 'Pedestrians', 'Poles', 'RailTrack', 'Rider', 'RoadLines', 'Roads', 'Sidewalks', 'Sky', 'Static', 'Terrain', 'TrafficLight', 'TrafficSigns', 'Train', 'Truck', 'Vegetation', 'Walls', 'Water', '__abs__', '__add__', '__and__', '__bool__', '__ceil__', '__class__', '__delattr__', '__dir__', '__divmod__', '__doc__', '__eq__', '__float__', '__floor__', '__floordiv__', '__format__', '__ge__', '__getattribute__', '__getnewargs__', '__gt__', '__hash__', '__index__', '__init__', '__init_subclass__', '__int__', '__invert__', '__le__', '__lshift__', '__lt__', '__mod__', '__module__', '__mul__', '__ne__', '__neg__', '__new__', '__or__', '__pos__', '__pow__', '__radd__', '__rand__', '__rdivmod__', '__reduce__', '__reduce_ex__', '__repr__', '__rfloordiv__', '__rlshift__', '__rmod__', '__rmul__', '__ror__', '__round__', '__rpow__', '__rrshift__', '__rshift__', '__rsub__', '__rtruediv__', '__rxor__', '__setattr__', '__sizeof__', '__slots__', '__str__', '__sub__', '__subclasshook__', '__truediv__', '__trunc__', '__xor__', 'bit_length', 'conjugate', 'denominator', 'from_bytes', 'imag', 'name', 'names', 'numerator', 'real', 'to_bytes', 'values']
 
@@ -466,44 +466,76 @@ def saveRgbImage(output, filepath, world, sensor, ego_vehicle, raycast_detection
         kitti3dbb = []
         kitti3dbbDVS = []
 
-        for vehicle in world.get_actors().filter("*vehicle*"):
-            if vehicle.id in hit_actors:
-                bounding_boxes = ClientSideBoundingBoxes.get_bounding_boxes([vehicle], sensor, output.height, output.width, output.fov)
-                for bbox in bounding_boxes:
-                    points = [(int(bbox[i, 0]), int(bbox[i, 1])) for i in range(8)]
-                    bounding_box = get_2d_bounding_box(np.array(points, dtype=np.int32))
-                    min_x, min_y, xdiff, ydiff = bounding_box
-                    isDvs = is_dvs_event_inside_bbox(dvs_events, min_x, min_y, min_x + xdiff, min_y + ydiff)
-                    center = get_bounding_box_center(bounding_box)
-                    image, datapoint, camera_bbox = create_kitti_datapoint(vehicle, sensor, calibration, img, deptharray, ego_vehicle.get_transform(), bbox)
-                    center_x, center_y = center
-                    if datapoint is not None:
-                        kitti3dbb.append(datapoint)
-                        tag = instance_data[center_y,center_x, 2]
-                        if tag == 0 :
-                            rgbbb.append( (vehicle.id, vehicle.attributes.get('base_type'), ( min_x, min_y, min_x + xdiff, min_y + ydiff )) )
-                            if isDvs == True:
-                                kitti3dbbDVS.append(datapoint)
-                                dvsbb.append( (vehicle.id, vehicle.attributes.get('base_type'), ( min_x, min_y, min_x + xdiff, min_y + ydiff )) )
+        # for vehicle in world.get_actors().filter("*vehicle*"):
+        #     if vehicle.id in hit_actors:
+        #         bounding_boxes = ClientSideBoundingBoxes.get_bounding_boxes([vehicle], sensor, output.height, output.width, output.fov)
+        #         for bbox in bounding_boxes:
+        #             points = [(int(bbox[i, 0]), int(bbox[i, 1])) for i in range(8)]
+        #             bounding_box = get_2d_bounding_box(np.array(points, dtype=np.int32))
+        #             min_x, min_y, xdiff, ydiff = bounding_box
+        #             isDvs = is_dvs_event_inside_bbox(dvs_events, min_x, min_y, min_x + xdiff, min_y + ydiff)
+        #             center = get_bounding_box_center(bounding_box)
+        #             transform = None
+        #             if ego_vehicle is not None:
+        #                 transform = ego_vehicle.get_transform()
+        #             else:
+        #                 transform = output.transform
+        #             image, datapoint, camera_bbox = create_kitti_datapoint(vehicle, sensor, calibration, img, deptharray, transform, bbox)
+        #             center_x, center_y = center
+        #             if datapoint is not None:
+        #                 kitti3dbb.append(datapoint)
+        #                 rgbbb.append( (vehicle.id, vehicle.attributes.get('base_type'), ( min_x, min_y, min_x + xdiff, min_y + ydiff )) )
+        #                 cv2.line(img, points[0], points[1], (0, 0, 255), 1)
+        #                 cv2.line(img, points[0], points[1], (0, 0, 255), 1)
+        #                 cv2.line(img, points[1], points[2], (0, 0, 255), 1)
+        #                 cv2.line(img, points[2], points[3], (0, 0, 255), 1)
+        #                 cv2.line(img, points[3], points[0], (0, 0, 255), 1)
+        #                 cv2.line(img, points[4], points[5], (0, 0, 255), 1)
+        #                 cv2.line(img, points[5], points[6], (0, 0, 255), 1)
+        #                 cv2.line(img, points[6], points[7], (0, 0, 255), 1)
+        #                 cv2.line(img, points[7], points[4], (0, 0, 255), 1)
+        #                 cv2.line(img, points[0], points[4], (0, 0, 255), 1)
+        #                 cv2.line(img, points[1], points[5], (0, 0, 255), 1)
+        #                 cv2.line(img, points[2], points[6], (0, 0, 255), 1)
+        #                 cv2.line(img, points[3], points[7], (0, 0, 255), 1)
+        #                 if isDvs == True:
+        #                     kitti3dbbDVS.append(datapoint)
+        #                     dvsbb.append( (vehicle.id, vehicle.attributes.get('base_type'), ( min_x, min_y, min_x + xdiff, min_y + ydiff )) )
 
-        for vehicle in world.get_actors().filter("*pedestrian*"):
-            bounding_boxes = ClientSideBoundingBoxes.get_bounding_boxes([vehicle], sensor, output.height, output.width, output.fov)
-            for bbox in bounding_boxes:
-                points = [(int(bbox[i, 0]), int(bbox[i, 1])) for i in range(8)]
-                bounding_box = get_2d_bounding_box(np.array(points, dtype=np.int32))
-                center = get_bounding_box_center(bounding_box)
-                min_x, min_y, xdiff, ydiff = bounding_box
-                image, datapoint, camera_bbox = create_kitti_datapoint(vehicle, sensor, calibration, img, deptharray, ego_vehicle.get_transform(), bbox)
-                isDvs = is_dvs_event_inside_bbox(dvs_events, min_x, min_y, min_x + xdiff, min_y + ydiff)
-                center_x, center_y = center
-                if datapoint is not None:
-                    kitti3dbb.append(datapoint)
-                    tag = instance_data[center_y,center_x, 2]
-                    if tag == 220:
-                        rgbbb.append( (vehicle.id, 'pedestrian', ( min_x, min_y, min_x + xdiff, min_y + ydiff )) )
-                        if isDvs == True:
-                            kitti3dbbDVS.append(datapoint)
-                            dvsbb.append( (vehicle.id, 'pedestrian', ( min_x, min_y, min_x + xdiff, min_y + ydiff )) )
+        # for vehicle in world.get_actors().filter("*pedestrian*"):
+        #     bounding_boxes = ClientSideBoundingBoxes.get_bounding_boxes([vehicle], sensor, output.height, output.width, output.fov)
+        #     for bbox in bounding_boxes:
+        #         points = [(int(bbox[i, 0]), int(bbox[i, 1])) for i in range(8)]
+        #         bounding_box = get_2d_bounding_box(np.array(points, dtype=np.int32))
+        #         center = get_bounding_box_center(bounding_box)
+        #         min_x, min_y, xdiff, ydiff = bounding_box
+        #         transform = None
+        #         if ego_vehicle is not None:
+        #             transform = ego_vehicle.get_transform()
+        #         else:
+        #             transform = output.transform
+        #         image, datapoint, camera_bbox = create_kitti_datapoint(vehicle, sensor, calibration, img, deptharray, transform, bbox)
+        #         isDvs = is_dvs_event_inside_bbox(dvs_events, min_x, min_y, min_x + xdiff, min_y + ydiff)
+        #         center_x, center_y = center
+        #         if datapoint is not None:
+        #             kitti3dbb.append(datapoint)
+        #             rgbbb.append( (vehicle.id, 'pedestrian', ( min_x, min_y, min_x + xdiff, min_y + ydiff )) )
+        #             cv2.line(img, points[0], points[1], (0, 0, 255), 1)
+        #             cv2.line(img, points[0], points[1], (0, 0, 255), 1)
+        #             cv2.line(img, points[1], points[2], (0, 0, 255), 1)
+        #             cv2.line(img, points[2], points[3], (0, 0, 255), 1)
+        #             cv2.line(img, points[3], points[0], (0, 0, 255), 1)
+        #             cv2.line(img, points[4], points[5], (0, 0, 255), 1)
+        #             cv2.line(img, points[5], points[6], (0, 0, 255), 1)
+        #             cv2.line(img, points[6], points[7], (0, 0, 255), 1)
+        #             cv2.line(img, points[7], points[4], (0, 0, 255), 1)
+        #             cv2.line(img, points[0], points[4], (0, 0, 255), 1)
+        #             cv2.line(img, points[1], points[5], (0, 0, 255), 1)
+        #             cv2.line(img, points[2], points[6], (0, 0, 255), 1)
+        #             cv2.line(img, points[3], points[7], (0, 0, 255), 1)
+        #             if isDvs == True:
+        #                 kitti3dbbDVS.append(datapoint)
+        #                 dvsbb.append( (vehicle.id, 'pedestrian', ( min_x, min_y, min_x + xdiff, min_y + ydiff )) )
 
         output_file = os.path.join(
         filepath, f'{output.frame}.png')
@@ -512,22 +544,21 @@ def saveRgbImage(output, filepath, world, sensor, ego_vehicle, raycast_detection
         output_file = os.path.join(filepath, f'dvs-{output.frame}.png')
         pygame.image.save(surface, output_file)
 
-        save_pascal_voc_format(rgbbb, os.path.join(
-        filepath, f'{output.frame}.xml'), f'{output.frame}.png', output.width, output.height)
-        save_coco_format(rgbbb, os.path.join(
-        filepath, f'{output.frame}.json'), output.frame, f'{output.frame}.png', output.width, output.height)
+        # save_pascal_voc_format(rgbbb, os.path.join(
+        # filepath, f'{output.frame}.xml'), f'{output.frame}.png', output.width, output.height)
+        # save_coco_format(rgbbb, os.path.join(
+        # filepath, f'{output.frame}.json'), output.frame, f'{output.frame}.png', output.width, output.height)
 
-        save_pascal_voc_format(dvsbb, os.path.join(
-        filepath, f'dvs-{output.frame}.xml'), f'dvs-{output.frame}.png', output.width, output.height)
+        # save_pascal_voc_format(dvsbb, os.path.join(
+        # filepath, f'dvs-{output.frame}.xml'), f'dvs-{output.frame}.png', output.width, output.height)
 
-        save_coco_format(dvsbb, os.path.join(
-        filepath, f'dvs-{output.frame}.json'), output.frame, f'dvs-{output.frame}.png', output.width, output.height)
+        # save_coco_format(dvsbb, os.path.join(
+        # filepath, f'dvs-{output.frame}.json'), output.frame, f'dvs-{output.frame}.png', output.width, output.height)
 
-        save_kitti_3d_format(kitti3dbb, os.path.join(filepath, f'{output.frame}.txt'))
-        save_kitti_3d_format(kitti3dbbDVS, os.path.join(filepath, f'dvs-{output.frame}.txt'))
+        # save_kitti_3d_format(kitti3dbb, os.path.join(filepath, f'{output.frame}.txt'))
+        # save_kitti_3d_format(kitti3dbbDVS, os.path.join(filepath, f'dvs-{output.frame}.txt'))
 
     except Exception as error:
-        # handle the exception
         print("An exception occurred:", error)
         traceback.print_exc()
 
@@ -538,13 +569,10 @@ def saveISImage(output, filepath):
             fp.writelines(str(output) + ", ")
             fp.writelines(str(output.transform) + "\n")
     except Exception as error:
-        # handle the exception
         print("An exception occurred:", error)
 
 def is_dvs_event_inside_bbox(event, x_min,y_min, x_max, y_max):
     x, y, polarity = event['x'], event['y'], event['pol']  # Extract x, y, and polarity
-  # Extract x, y, and polarity
-    # return x_min <= x <= x_max and y_min <= y <= y_max
     is_inside_bbox = np.logical_and(
         np.logical_and(x_min <= event['x'], event['x'] <= x_max),
         np.logical_and(y_min <= event['y'], event['y'] <= y_max)
@@ -563,36 +591,19 @@ def dvs_callback(data, filepath):
     dvs_img[dvs_events[:]['y'], dvs_events[:]
             ['x'], dvs_events[:]['pol'] * 2] = 255
     surface = pygame.surfarray.make_surface(dvs_img.swapaxes(0, 1))
-    # output_folder = os.path.join(
-    #     'out', 'dvs')
-    # os.makedirs(output_folder, exist_ok=True)
     output_file = os.path.join(filepath, f'{data.frame}.png')
     pygame.image.save(surface, output_file)
 
 def optical_camera_callback(image, filepath):
     width = image.width
     height = image.height
-
-    # Convert the raw data to a numpy array of 32-bit floats
     image_data = np.frombuffer(image.raw_data, dtype=np.float32)
-
-    # Reshape the image data to the correct shape (height, width, 2)
     image_data = image_data.reshape((height, width, 2))
-
-    # Extract the magnitude of the optical flow vectors
     magnitude = np.sqrt(np.sum(image_data ** 2, axis=2))
-
-    # Normalize the magnitude values to the range [0, 255] for visualization
     normalized_magnitude = cv2.normalize(
         magnitude, None, 0, 255, cv2.NORM_MINMAX)
-
-    # Convert the magnitude values to 8-bit BGR format (for visualization)
     bgr_image = cv2.applyColorMap(
         normalized_magnitude.astype(np.uint8), cv2.COLORMAP_JET)
-
-    # output_folder = os.path.join(
-    #     'out', 'optical')
-    # os.makedirs(output_folder, exist_ok=True)
     filename = os.path.join(filepath, f"{image.frame}.png")
     cv2.imwrite(filename, bgr_image)
 

@@ -17,22 +17,14 @@ def spawnVehicles(client, world, spawn_points, blueprintsVehicles, number):
     # 'vehicle.harley-davidson.low_rider',
 
     customBp = {
-        # 'vehicle.carlamotors.firetruck': 2,
-        # 'vehicle.ford.ambulance': 2,
-        # 'vehicle.dodge.charger_police': 10,
-        # 'vehicle.mercedes.coupe': 10,
-        # 'vehicle.tesla.model3': 15,
-        # 'vehicle.jeep.wrangler_rubicon': 15,
-        # 'vehicle.ford.mustang': 16,
-        # 'vehicle.toyota.prius': 30,
-        # 'vehicle.kawasaki.ninja': 100,
-        # 'vehicle.harley-davidson.low_rider': 25,
-        # 'vehicle.vespa.zx125': 25,
-        'vehicle.bh.crossbike': 100,
-        'vehicle.diamondback.century': 100,
-        # 'vehicle.gazelle.omafiets': 30,
-        # 'vehicle.vespa.zx125': 30,
-        # 'vehicle.yamaha.yzf': 20
+        'vehicle.carlamotors.firetruck': 2,
+        'vehicle.ford.ambulance': 2,
+        'vehicle.dodge.charger_police': 10,
+        'vehicle.mercedes.coupe': 10,
+        'vehicle.tesla.model3': 15,
+        'vehicle.jeep.wrangler_rubicon': 15,
+        'vehicle.ford.mustang': 16,
+        'vehicle.toyota.prius': 30,
     }
         
     batch = []
