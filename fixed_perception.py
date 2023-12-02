@@ -1,7 +1,7 @@
 import carla
 from carla import Transform, Location, Rotation
 from npc_spawning import spawnWalkers, spawnVehicles
-from configuration import attachSensorsForFixedPerception, SimulationParams, setupTrafficManager, setupWorld, createOutputDirectories, CarlaSyncMode
+from configuration import attachSensorsForFixedPerception, SimulationParams, setupTrafficManager, setupWorld, createOutputDirectoriesFixedPerception, CarlaSyncMode
 from utils import g29_steering_wheel
 import save_sensors
 import random
@@ -25,7 +25,7 @@ class FixedPerception:
         f = open(config_filepath)
         data = json.load(f)
         print(data)
-        createOutputDirectories(data, coordinate['id'])
+        createOutputDirectoriesFixedPerception(data, coordinate['id'])
 
         self.sensors_ref, self.sensor_types, self.sensor_names = attachSensorsForFixedPerception(
             world, data, coordinate)  

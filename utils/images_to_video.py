@@ -49,14 +49,16 @@ def create_video_from_images(image_dir, output_video, frame_width, frame_height,
     if "dvs" in output_video:
         image_files = [f for f in os.listdir(image_dir) if f.endswith(('.jpg', '.png')) and f[0].isalpha()]
     image_files.sort()  # Sort the files for correct sequence
-    image_files = image_files[20:]
+    image_files = image_files[:4800]
 
     # Initialize OpenCV VideoWriter
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')  # Use 'mp4v' codec for MP4
     out = cv2.VideoWriter(output_video, fourcc, frame_rate, (frame_width, frame_height))
-
+    j = 0
     # Loop through each image and create frames for the video
     for image_file in image_files:
+        j = j+1 
+        print(j)
         image_path = os.path.join(image_dir, image_file)
         frame = cv2.imread(image_path)
         frame = cv2.resize(frame, (frame_width, frame_height))
@@ -70,40 +72,66 @@ def create_video_from_images(image_dir, output_video, frame_width, frame_height,
 # List of folders containing images
 folders = [
 
-    # '/home/apg/manideep/out/Town10HD_Opt_19_11_2023_16_27_25/ego0/optical_flow_camera-back',
-    #        '/home/apg/manideep/out/Town10HD_Opt_19_11_2023_16_27_25/ego0/optical_flow_camera-back-left',
-    #        '/home/apg/manideep/out/Town10HD_Opt_19_11_2023_16_27_25/ego0/optical_flow_camera-back-right',
-    #        '/home/apg/manideep/out/Town10HD_Opt_19_11_2023_16_27_25/ego0/optical_flow-front',
-    #        '/home/apg/manideep/out/Town10HD_Opt_19_11_2023_16_27_25/ego0/optical_flow_camera-front-left',
-    #        '/home/apg/manideep/out/Town10HD_Opt_19_11_2023_16_27_25/ego0/optical_flow_camera-front-right',
+    # '/home/apg/manideep/carla/out/Town10HD_Opt_28_11_2023_17_23_46/fixed-1/depth_camera',
+    # '/home/apg/manideep/carla/out/Town10HD_Opt_28_11_2023_17_23_46/fixed-2/depth_camera',
+    # '/home/apg/manideep/carla/out/Town10HD_Opt_28_11_2023_17_23_46/fixed-3/depth_camera',
+    # '/home/apg/manideep/carla/out/Town10HD_Opt_28_11_2023_17_23_46/fixed-4/depth_camera',
 
-    # '/home/apg/manideep/out/Town10HD_Opt_19_11_2023_16_27_25/ego0/depth_camera-back',
-    #        '/home/apg/manideep/out/Town10HD_Opt_19_11_2023_16_27_25/ego0/depth_camera-back-left',
-    #        '/home/apg/manideep/out/Town10HD_Opt_19_11_2023_16_27_25/ego0/depth_camera-back-right',
-    #        '/home/apg/manideep/out/Town10HD_Opt_19_11_2023_16_27_25/ego0/depth_camera-front',
-    #        '/home/apg/manideep/out/Town10HD_Opt_19_11_2023_16_27_25/ego0/depth_camera-front-left',
-    #        '/home/apg/manideep/out/Town10HD_Opt_19_11_2023_16_27_25/ego0/depth_camera-front-right',
+    # '/home/apg/manideep/carla/out/Town10HD_Opt_28_11_2023_17_23_46/fixed-1/instance_segmentation_camera',
+    # '/home/apg/manideep/carla/out/Town10HD_Opt_28_11_2023_17_23_46/fixed-2/instance_segmentation_camera',
+    # '/home/apg/manideep/carla/out/Town10HD_Opt_28_11_2023_17_23_46/fixed-3/instance_segmentation_camera',
+    # '/home/apg/manideep/carla/out/Town10HD_Opt_28_11_2023_17_23_46/fixed-4/instance_segmentation_camera',
 
-    #    '/home/apg/manideep/out/Town10HD_Opt_19_11_2023_16_27_25/ego0/instance_segmentation_camera-back',
-    #    '/home/apg/manideep/out/Town10HD_Opt_19_11_2023_16_27_25/ego0/instance_segmentation_camera-back-left',
-    #        '/home/apg/manideep/out/Town10HD_Opt_19_11_2023_16_27_25/ego0/instance_segmentation_camera-back-right',
-    #        '/home/apg/manideep/out/Town10HD_Opt_19_11_2023_16_27_25/ego0/instance_segmentation_camera-front',
-    #        '/home/apg/manideep/out/Town10HD_Opt_19_11_2023_16_27_25/ego0/instance_segmentation_camera-front-left',
-    #        '/home/apg/manideep/out/Town10HD_Opt_19_11_2023_16_27_25/ego0/instance_segmentation_camera-front-right',
+    # '/home/apg/manideep/carla/out/Town10HD_Opt_28_11_2023_17_23_46/fixed-1/semantic_segmentation_camera',
+    # '/home/apg/manideep/carla/out/Town10HD_Opt_28_11_2023_17_23_46/fixed-2/semantic_segmentation_camera',
+    # '/home/apg/manideep/carla/out/Town10HD_Opt_28_11_2023_17_23_46/fixed-3/semantic_segmentation_camera',
+    # '/home/apg/manideep/carla/out/Town10HD_Opt_28_11_2023_17_23_46/fixed-4/semantic_segmentation_camera',
 
-    #         '/home/apg/manideep/out/Town10HD_Opt_19_11_2023_16_27_25/ego0/semantic_segmentation_camera-back',
-    #        '/home/apg/manideep/out/Town10HD_Opt_19_11_2023_16_27_25/ego0/semantic_segmentation_camera-back-left',
-    #        '/home/apg/manideep/out/Town10HD_Opt_19_11_2023_16_27_25/ego0/semantic_segmentation_camera-back-right',
-    #        '/home/apg/manideep/out/Town10HD_Opt_19_11_2023_16_27_25/ego0/semantic_segmentation_camera-front',
-    #        '/home/apg/manideep/out/Town10HD_Opt_19_11_2023_16_27_25/ego0/semantic_segmentation_camera-front-left',
-    #        '/home/apg/manideep/out/Town10HD_Opt_19_11_2023_16_27_25/ego0/semantic_segmentation_camera-front-right',
+    # '/home/apg/manideep/carla/out/Town10HD_Opt_28_11_2023_17_23_46/fixed-1/optical_flow_camera',
+    # '/home/apg/manideep/carla/out/Town10HD_Opt_28_11_2023_17_23_46/fixed-2/optical_flow_camera',
+    # '/home/apg/manideep/carla/out/Town10HD_Opt_28_11_2023_17_23_46/fixed-3/optical_flow_camera',
+    # '/home/apg/manideep/carla/out/Town10HD_Opt_28_11_2023_17_23_46/fixed-4/optical_flow_camera',
+
+    # '/home/apg/manideep/carla/out/Town10HD_Opt_28_11_2023_17_23_46/fixed-1/rgb_camera',
+    # '/home/apg/manideep/carla/out/Town10HD_Opt_28_11_2023_17_23_46/fixed-2/rgb_camera',
+    '/home/apg/manideep/carla/out/Town10HD_Opt_28_11_2023_17_23_46/fixed-3/rgb_camera',
+    # '/home/apg/manideep/carla/out/Town10HD_Opt_28_11_2023_17_23_46/fixed-4/rgb_camera',
+
+
+        # '/home/apg/manideep/carla/out/Town10HD_Opt_24_11_2023_15_44_54/ego0/optical_flow_camera-back',
+        #    '/home/apg/manideep/carla/out/Town10HD_Opt_24_11_2023_15_44_54/ego0/optical_flow_camera-back-left',
+        #    '/home/apg/manideep/carla/out/Town10HD_Opt_24_11_2023_15_44_54/ego0/optical_flow_camera-back-right',
+        #    '/home/apg/manideep/carla/out/Town10HD_Opt_24_11_2023_15_44_54/ego0/optical_flow-front',
+        #    '/home/apg/manideep/carla/out/Town10HD_Opt_24_11_2023_15_44_54/ego0/optical_flow_camera-front-left',
+        #    '/home/apg/manideep/carla/out/Town10HD_Opt_24_11_2023_15_44_54/ego0/optical_flow_camera-front-right',
+
+        #     '/home/apg/manideep/carla/out/Town10HD_Opt_24_11_2023_15_44_54/ego0/depth_camera-back',
+        #    '/home/apg/manideep/carla/out/Town10HD_Opt_24_11_2023_15_44_54/ego0/depth_camera-back-left',
+        #    '/home/apg/manideep/carla/out/Town10HD_Opt_24_11_2023_15_44_54/ego0/depth_camera-back-right',
+        #    '/home/apg/manideep/carla/out/Town10HD_Opt_24_11_2023_15_44_54/ego0/depth_camera-front',
+        #    '/home/apg/manideep/carla/out/Town10HD_Opt_24_11_2023_15_44_54/ego0/depth_camera-front-left',
+        #    '/home/apg/manideep/carla/out/Town10HD_Opt_24_11_2023_15_44_54/ego0/depth_camera-front-right',
+
+        #     '/home/apg/manideep/carla/out/Town10HD_Opt_24_11_2023_15_44_54/ego0/instance_segmentation_camera-back',
+        #    '/home/apg/manideep/carla/out/Town10HD_Opt_24_11_2023_15_44_54/ego0/instance_segmentation_camera-back-left',
+        #    '/home/apg/manideep/carla/out/Town10HD_Opt_24_11_2023_15_44_54/ego0/instance_segmentation_camera-back-right',
+        #    '/home/apg/manideep/carla/out/Town10HD_Opt_24_11_2023_15_44_54/ego0/instance_segmentation_camera-front',
+        #    '/home/apg/manideep/carla/out/Town10HD_Opt_24_11_2023_15_44_54/ego0/instance_segmentation_camera-front-left',
+        #    '/home/apg/manideep/carla/out/Town10HD_Opt_24_11_2023_15_44_54/ego0/instance_segmentation_camera-front-right',
+
+        #     '/home/apg/manideep/carla/out/Town10HD_Opt_24_11_2023_15_44_54/ego0/semantic_segmentation_camera-back',
+        #    '/home/apg/manideep/carla/out/Town10HD_Opt_24_11_2023_15_44_54/ego0/semantic_segmentation_camera-back-left',
+        #    '/home/apg/manideep/carla/out/Town10HD_Opt_24_11_2023_15_44_54/ego0/semantic_segmentation_camera-back-right',
+        #    '/home/apg/manideep/carla/out/Town10HD_Opt_24_11_2023_15_44_54/ego0/semantic_segmentation_camera-front',
+        #    '/home/apg/manideep/carla/out/Town10HD_Opt_24_11_2023_15_44_54/ego0/semantic_segmentation_camera-front-left',
+        #    '/home/apg/manideep/carla/out/Town10HD_Opt_24_11_2023_15_44_54/ego0/semantic_segmentation_camera-front-right',
            
-    # '/home/apg/manideep/out/Town10HD_Opt_19_11_2023_16_27_25/ego0/rgb_camera-back-left',
-    # '/home/apg/manideep/out/Town10HD_Opt_19_11_2023_16_27_25/ego0/rgb_camera-front-left',
-    # '/home/apg/manideep/out/Town10HD_Opt_19_11_2023_16_27_25/ego0/rgb_camera-back',
-    '/home/apg/manideep/carla/out/Town10HD_Opt_22_11_2023_19_28_30/ego0/rgb_camera-front',
-    # '/home/apg/manideep/out/Town10HD_Opt_19_11_2023_16_27_25/ego0/rgb_camera-back-right',
-    # '/home/apg/manideep/out/Town10HD_Opt_19_11_2023_16_27_25/ego0/rgb_camera-front-right',
+        # '/home/apg/manideep/carla/out/Town10HD_Opt_24_11_2023_15_44_54/ego0/rgb_camera-back-left',
+        # '/home/apg/manideep/carla/out/Town10HD_Opt_24_11_2023_15_44_54/ego0/rgb_camera-front-left',
+        # '/home/apg/manideep/carla/out/Town10HD_Opt_24_11_2023_15_44_54/ego0/rgb_camera-back',
+        # '/home/apg/manideep/carla/out/Town10HD_Opt_24_11_2023_15_44_54/ego0/rgb_camera-front',
+        # '/home/apg/manideep/carla/out/Town10HD_Opt_24_11_2023_15_44_54/ego0/rgb_camera-back-right',
+        # '/home/apg/manideep/carla/out/Town10HD_Opt_24_11_2023_15_44_54/ego0/rgb_camera-front-right',
 
 
            ]
@@ -117,6 +145,7 @@ frame_rate = 20  # Frames per second
 for folder in folders:
     # Output video filename based on the folder name
     folder_name = folder.split('/')[-1]
-    output_video = f'/home/apg/manideep/carla/out/{folder_name}.mp4'
+    perception = folder.split('/')[-2]
+    output_video = f'/home/apg/manideep/carla/out/{folder_name}-{perception}.mp4'
     print("Starting with ", folder_name)
     create_video_from_images(folder, output_video, frame_width, frame_height, frame_rate)

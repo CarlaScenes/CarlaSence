@@ -15,9 +15,7 @@ class SimulationParams:
     delta_seconds = None
     # At the very start at the simulation nothing happens, so skip the first n ticks
     ignore_first_n_ticks = None
-    sensor_json_filepath = [
-        "config/sensors.json"
-    ]
+    sensor_json_filepath = "config/sensors.json"
     fixed_perception_sensor_json_filepath = "config/sensors-fixed-perception.json"
     fixed_perception_sensor_locations_json_filepath = "config/sensors-cordinates-fixed-perception.json"
     number_of_ego_vehicles = None
@@ -332,7 +330,7 @@ def createOutputDirectories(data):
                 pass
                 # print("Creation of " + os.path.join(ego_folder, sensor) + " failed")
 
-def createOutputDirectories(data, id):
+def createOutputDirectoriesFixedPerception(data, id):
     # output_sensor_folders = [ data['sensors'][i]['type'] for i in range(len(data['sensors'])) ]
     output_sensor_folders = [data['sensors'][i]['role_name']
                              for i in range(len(data['sensors']))]

@@ -3,7 +3,7 @@
         {
             "type": "sensor.lidar.ray_cast_semantic",
             "role_name": "ray_cast_semantic",
-            "range": 1000,
+            "range": 2000,
             "channels": 64,
             "points_per_second": 3000000,
             "upper_fov": 30.0,
@@ -14,7 +14,7 @@
         {
             "type": "sensor.lidar.ray_cast_semantic",
             "role_name": "ray_cast_semantic-2",
-            "range": 1000,
+            "range": 2000,
             "channels": 64,
             "points_per_second": 3000000,
             "upper_fov": 50.0,
@@ -25,42 +25,42 @@
         {
             "type": "sensor.camera.semantic_segmentation",
             "role_name": "semantic_segmentation_camera",
-            "fov": 70.0,
+            "fov": 90.0,
             "image_size_x": 1280,
             "image_size_y": 960
         },
         {
             "type": "sensor.camera.instance_segmentation",
             "role_name": "instance_segmentation_camera",
-            "fov": 70.0,
+            "fov": 90.0,
             "image_size_x": 1280,
             "image_size_y": 960
         },
         {
             "type": "sensor.camera.optical_flow",
             "role_name": "optical_flow_camera",
-            "fov": 70.0,
+            "fov": 90.0,
             "image_size_x": 1280,
             "image_size_y": 960
         },
         {
             "type": "sensor.camera.depth",
             "role_name": "depth_camera",
-            "fov": 70.0,
+            "fov": 90.0,
             "image_size_x": 1280,
             "image_size_y": 960
         },
         {
             "type": "sensor.camera.dvs",
             "role_name": "dvs_camera",
-            "fov": 70.0,
+            "fov": 90.0,
             "image_size_x": 1280,
             "image_size_y": 960
         },
         {
             "type": "sensor.camera.rgb",
             "role_name": "rgb_camera",
-            "fov": 70.0,
+            "fov": 90.0,
             "image_size_x": 1280,
             "image_size_y": 960
         }

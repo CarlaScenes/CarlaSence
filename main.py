@@ -1,3 +1,4 @@
+import traceback
 import sys
 import subprocess
 import glob
@@ -112,9 +113,9 @@ def main():
 
     egos = []
     fixed = []
-    # for i in range(SimulationParams.number_of_ego_vehicles):
-    #     egos.append(EgoVehicle(
-    #         SimulationParams.sensor_json_filepath[i], None, world, args))
+    for i in range(SimulationParams.number_of_ego_vehicles):
+        egos.append(EgoVehicle(
+            SimulationParams.sensor_json_filepath, None, world, args))
         
     with open(SimulationParams.fixed_perception_sensor_locations_json_filepath, 'r') as json_file:
         sensor_locations = json.load(json_file)
@@ -155,20 +156,20 @@ def main():
                     print(k)
                     continue
 
-                # for i in range(len(egos)):
-                #     data = egos[i].getSensorData(frame_id)
+                for i in range(len(egos)):
+                    data = egos[i].getSensorData(frame_id)
 
-                #     output_folder = os.path.join(
-                #         SimulationParams.data_output_subfolder, "ego" + str(i))
+                    output_folder = os.path.join(
+                        SimulationParams.data_output_subfolder, "ego" + str(i))
 
-                #     print("- ego - vehcile -")
+                    print("- ego - vehcile -")
 
-                #     save_sensors.saveAllSensors(
-                #         output_folder, data, egos[i].sensor_names, world)
+                    save_sensors.saveAllSensors(
+                        output_folder, data, egos[i].sensor_names, world)
 
-                #     control = egos[i].ego.get_control()
-                #     angle = control.steer
-                #     save_sensors.saveSteeringAngle(angle, output_folder)
+                    control = egos[i].ego.get_control()
+                    angle = control.steer
+                    save_sensors.saveSteeringAngle(angle, output_folder)
 
                 print("- fixed - perception -")
 
@@ -177,10 +178,12 @@ def main():
                     data = fixed[i].getSensorData(frame_id)
                     output_folder = os.path.join(
                         SimulationParams.data_output_subfolder, "fixed-" + str(i+1))
-
-                    save_sensors.saveAllSensors(
-                        output_folder, data, fixed[i].sensor_names, world)
-
+                    try:
+                        save_sensors.saveAllSensors(
+                            output_folder, data, fixed[i].sensor_names, world)
+                    except Exception as error:
+                        print("An exception occurred in fixed - perception saving:", error)
+                        traceback.print_exc()
                 print("new frame!")
     finally:
         # stop pedestrians (list is [controller, actor, controller, actor ...])
