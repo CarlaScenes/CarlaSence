@@ -338,7 +338,6 @@ def calculate_occlusion(bbox, agent, depth_map):
 
     #discretize the 0–1 occlusion value into KITTI’s {0,1,2,3} labels by equally dividing the interval into 4 parts
     occlusion = np.digitize(occlusion, bins=[0.25, 0.50, 0.75])
-
     return occlusion
 
 def calculate_truncation(uncropped_bbox, cropped_bbox):

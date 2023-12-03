@@ -128,10 +128,10 @@ def main():
                 fixed.append(FixedPerception(SimulationParams.fixed_perception_sensor_json_filepath, None, world, args, coordinate) )
 
     # Spawn npc actors
-    w_all_actors, w_all_id = spawnWalkers(
-        client, world, blueprintsWalkers, SimulationParams.num_of_walkers)
     # w_all_actors = []
     # w_all_id = []
+    w_all_actors, w_all_id = spawnWalkers(
+        client, world, blueprintsWalkers, SimulationParams.num_of_walkers)
     v_all_actors, v_all_id = spawnVehicles(
         client, world, vehicles_spawn_points, blueprintsVehicles, SimulationParams.num_of_vehicles)
     world.tick()

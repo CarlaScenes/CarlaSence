@@ -1,6 +1,49 @@
 {
     "sensors": [
         {
+            "type": "sensor.other.gnss",
+            "role_name": "gnss",
+            "transform": [
+                {
+                    "x": 1.0,
+                    "y": 0.0,
+                    "z": 2.0,
+                    "roll": 0.0,
+                    "pitch": 0.0,
+                    "yaw": 0.0
+                }
+            ],
+            "noise_alt_stddev": 0.0,
+            "noise_lat_stddev": 0.0,
+            "noise_lon_stddev": 0.0,
+            "noise_alt_bias": 0.0,
+            "noise_lat_bias": 0.0,
+            "noise_lon_bias": 0.0
+        },
+        {
+            "type": "sensor.other.imu",
+            "role_name": "imu",
+            "transform": [
+                {
+                    "x": 1.0,
+                    "y": 0.0,
+                    "z": 2.0,
+                    "roll": 0.0,
+                    "pitch": 0.0,
+                    "yaw": 0.0
+                }
+            ],
+            "noise_accel_stddev_x": 0.0,
+            "noise_accel_stddev_y": 0.0,
+            "noise_accel_stddev_z": 0.0,
+            "noise_gyro_stddev_x": 0.0,
+            "noise_gyro_stddev_y": 0.0,
+            "noise_gyro_stddev_z": 0.0,
+            "noise_gyro_bias_x": 0.0,
+            "noise_gyro_bias_y": 0.0,
+            "noise_gyro_bias_z": 0.0
+        },
+        {
             "type": "sensor.lidar.ray_cast_semantic",
             "role_name": "ray_cast_semantic-front",
             "transform": [
@@ -94,6 +137,23 @@
             "image_size_y": 960
         },
         {
+            "type": "sensor.camera.optical_flow",
+            "role_name": "optical_flow-front",
+            "transform": [
+                {
+                    "x": 0.18,
+                    "y": 0.0,
+                    "z": 1.7,
+                    "roll": 0.0,
+                    "pitch": 0.0,
+                    "yaw": 0.0
+                }
+            ],
+            "fov": 70.0,
+            "image_size_x": 1280,
+            "image_size_y": 960
+        },
+        {
             "type": "sensor.camera.depth",
             "role_name": "depth_camera-front",
             "transform": [
@@ -121,6 +181,726 @@
                     "roll": 0.0,
                     "pitch": 0.0,
                     "yaw": 0.0
+                }
+            ],
+            "fov": 70.0,
+            "image_size_x": 1280,
+            "image_size_y": 960
+        },
+        {
+            "type": "sensor.lidar.ray_cast_semantic",
+            "role_name": "ray_cast_semantic-front-left",
+            "transform": [
+                {
+                    "x": 0.18,
+                    "y": -0.462712,
+                    "z": 1.7,
+                    "roll": 0.0,
+                    "pitch": 0.0,
+                    "yaw": -55.0
+                }
+            ],
+            "range": 1000,
+            "channels": 64,
+            "points_per_second": 3000000,
+            "upper_fov": 30.0,
+            "lower_fov": -60,
+            "horizontal_fov": 360,
+            "rotation_frequency": 60
+        },
+        {
+            "type": "sensor.lidar.ray_cast_semantic",
+            "role_name": "ray_cast_semantic-front-left-2",
+            "transform": [
+                {
+                    "x": 0.18,
+                    "y": -0.462712,
+                    "z": 1.7,
+                    "roll": 0.0,
+                    "pitch": 0.0,
+                    "yaw": -55.0
+                }
+            ],
+            "range": 1000,
+            "channels": 64,
+            "points_per_second": 3000000,
+            "upper_fov": 50.0,
+            "lower_fov": -50,
+            "horizontal_fov": 360,
+            "rotation_frequency": 90
+        },
+        {
+            "type": "sensor.camera.semantic_segmentation",
+            "role_name": "semantic_segmentation_camera-front-left",
+            "transform": [
+                {
+                    "x": 0.18,
+                    "y": -0.462712,
+                    "z": 1.7,
+                    "roll": 0.0,
+                    "pitch": 0.0,
+                    "yaw": -55.0
+                }
+            ],
+            "fov": 70.0,
+            "image_size_x": 1280,
+            "image_size_y": 960
+        },
+        {
+            "type": "sensor.camera.instance_segmentation",
+            "role_name": "instance_segmentation_camera-front-left",
+            "transform": [
+                {
+                    "x": 0.18,
+                    "y": -0.462712,
+                    "z": 1.7,
+                    "roll": 0.0,
+                    "pitch": 0.0,
+                    "yaw": -55.0
+                }
+            ],
+            "fov": 70.0,
+            "image_size_x": 1280,
+            "image_size_y": 960
+        },
+        {
+            "type": "sensor.camera.dvs",
+            "role_name": "dvs_camera-front-left",
+            "transform": [
+                {
+                    "x": 0.18,
+                    "y": -0.462712,
+                    "z": 1.7,
+                    "roll": 0.0,
+                    "pitch": 0.0,
+                    "yaw": -55.0
+                }
+            ],
+            "fov": 70.0,
+            "image_size_x": 1280,
+            "image_size_y": 960
+        },
+        {
+            "type": "sensor.camera.optical_flow",
+            "role_name": "optical_flow_camera-front-left",
+            "transform": [
+                {
+                    "x": 0.18,
+                    "y": -0.462712,
+                    "z": 1.7,
+                    "roll": 0.0,
+                    "pitch": 0.0,
+                    "yaw": -55.0
+                }
+            ],
+            "fov": 70.0,
+            "image_size_x": 1280,
+            "image_size_y": 960
+        },
+        {
+            "type": "sensor.camera.depth",
+            "role_name": "depth_camera-front-left",
+            "transform": [
+                {
+                    "x": 0.18,
+                    "y": -0.462712,
+                    "z": 1.7,
+                    "roll": 0.0,
+                    "pitch": 0.0,
+                    "yaw": -55.0
+                }
+            ],
+            "fov": 70.0,
+            "image_size_x": 1280,
+            "image_size_y": 960
+        },
+        {
+            "type": "sensor.camera.rgb",
+            "role_name": "rgb_camera-front-left",
+            "transform": [
+                {
+                    "x": 0.18,
+                    "y": -0.462712,
+                    "z": 1.7,
+                    "roll": 0.0,
+                    "pitch": 0.0,
+                    "yaw": -55.0
+                }
+            ],
+            "fov": 70.0,
+            "image_size_x": 1280,
+            "image_size_y": 960
+        },
+        {
+            "type": "sensor.lidar.ray_cast_semantic",
+            "role_name": "ray_cast_semantic-front-right",
+            "transform": [
+                {
+                    "x": 0.18,
+                    "y": 0.462712,
+                    "z": 1.7,
+                    "roll": 0.0,
+                    "pitch": 0.0,
+                    "yaw": 55.0
+                }
+            ],
+            "range": 1000,
+            "channels": 64,
+            "points_per_second": 3000000,
+            "upper_fov": 30.0,
+            "lower_fov": -60,
+            "horizontal_fov": 360,
+            "rotation_frequency": 60
+        },
+        {
+            "type": "sensor.lidar.ray_cast_semantic",
+            "role_name": "ray_cast_semantic-front-right-2",
+            "transform": [
+                {
+                    "x": 0.18,
+                    "y": 0.462712,
+                    "z": 1.7,
+                    "roll": 0.0,
+                    "pitch": 0.0,
+                    "yaw": 55.0
+                }
+            ],
+            "range": 1000,
+            "channels": 64,
+            "points_per_second": 3000000,
+            "upper_fov": 50.0,
+            "lower_fov": -50,
+            "horizontal_fov": 360,
+            "rotation_frequency": 90
+        },
+        {
+            "type": "sensor.camera.semantic_segmentation",
+            "role_name": "semantic_segmentation_camera-front-right",
+            "transform": [
+                {
+                    "x": 0.18,
+                    "y": 0.462712,
+                    "z": 1.7,
+                    "roll": 0.0,
+                    "pitch": 0.0,
+                    "yaw": 55.0
+                }
+            ],
+            "fov": 70.0,
+            "image_size_x": 1280,
+            "image_size_y": 960
+        },
+        {
+            "type": "sensor.camera.instance_segmentation",
+            "role_name": "instance_segmentation_camera-front-right",
+            "transform": [
+                {
+                    "x": 0.18,
+                    "y": 0.462712,
+                    "z": 1.7,
+                    "roll": 0.0,
+                    "pitch": 0.0,
+                    "yaw": 55.0
+                }
+            ],
+            "fov": 70.0,
+            "image_size_x": 1280,
+            "image_size_y": 960
+        },
+        {
+            "type": "sensor.camera.dvs",
+            "role_name": "dvs_camera-front-right",
+            "transform": [
+                {
+                    "x": 0.18,
+                    "y": 0.462712,
+                    "z": 1.7,
+                    "roll": 0.0,
+                    "pitch": 0.0,
+                    "yaw": 55.0
+                }
+            ],
+            "fov": 70.0,
+            "image_size_x": 1280,
+            "image_size_y": 960
+        },
+        {
+            "type": "sensor.camera.optical_flow",
+            "role_name": "optical_flow_camera-front-right",
+            "transform": [
+                {
+                    "x": 0.18,
+                    "y": 0.462712,
+                    "z": 1.7,
+                    "roll": 0.0,
+                    "pitch": 0.0,
+                    "yaw": 55.0
+                }
+            ],
+            "fov": 70.0,
+            "image_size_x": 1280,
+            "image_size_y": 960
+        },
+        {
+            "type": "sensor.camera.depth",
+            "role_name": "depth_camera-front-right",
+            "transform": [
+                {
+                    "x": 0.18,
+                    "y": 0.462712,
+                    "z": 1.7,
+                    "roll": 0.0,
+                    "pitch": 0.0,
+                    "yaw": 55.0
+                }
+            ],
+            "fov": 70.0,
+            "image_size_x": 1280,
+            "image_size_y": 960
+        },
+        {
+            "type": "sensor.camera.rgb",
+            "role_name": "rgb_camera-front-right",
+            "transform": [
+                {
+                    "x": 0.18,
+                    "y": 0.462712,
+                    "z": 1.7,
+                    "roll": 0.0,
+                    "pitch": 0.0,
+                    "yaw": 55.0
+                }
+            ],
+            "fov": 70.0,
+            "image_size_x": 1280,
+            "image_size_y": 960
+        },
+        {
+            "type": "sensor.lidar.ray_cast_semantic",
+            "role_name": "ray_cast_semantic-back",
+            "transform": [
+                {
+                    "x": -1.34,
+                    "y": 0.0,
+                    "z": 1.7,
+                    "roll": 0.0,
+                    "pitch": 0.0,
+                    "yaw": 180.0
+                }
+            ],
+            "range": 1000,
+            "channels": 64,
+            "points_per_second": 3000000,
+            "upper_fov": 30.0,
+            "lower_fov": -60,
+            "horizontal_fov": 360,
+            "rotation_frequency": 60
+        },
+        {
+            "type": "sensor.lidar.ray_cast_semantic",
+            "role_name": "ray_cast_semantic-back-2",
+            "transform": [
+                {
+                    "x": -1.34,
+                    "y": 0.0,
+                    "z": 1.7,
+                    "roll": 0.0,
+                    "pitch": 0.0,
+                    "yaw": 180.0
+                }
+            ],
+            "range": 1000,
+            "channels": 64,
+            "points_per_second": 3000000,
+            "upper_fov": 50.0,
+            "lower_fov": -50,
+            "horizontal_fov": 360,
+            "rotation_frequency": 90
+        },
+        {
+            "type": "sensor.camera.semantic_segmentation",
+            "role_name": "semantic_segmentation_camera-back",
+            "transform": [
+                {
+                    "x": -1.34,
+                    "y": 0.0,
+                    "z": 1.7,
+                    "roll": 0.0,
+                    "pitch": 0.0,
+                    "yaw": 180.0
+                }
+            ],
+            "fov": 110.0,
+            "image_size_x": 1280,
+            "image_size_y": 960
+        },
+        {
+            "type": "sensor.camera.instance_segmentation",
+            "role_name": "instance_segmentation_camera-back",
+            "transform": [
+                {
+                    "x": -1.34,
+                    "y": 0.0,
+                    "z": 1.7,
+                    "roll": 0.0,
+                    "pitch": 0.0,
+                    "yaw": 180.0
+                }
+            ],
+            "fov": 110.0,
+            "image_size_x": 1280,
+            "image_size_y": 960
+        },
+        {
+            "type": "sensor.camera.dvs",
+            "role_name": "dvs_camera-back",
+            "transform": [
+                {
+                    "x": -1.34,
+                    "y": 0.0,
+                    "z": 1.7,
+                    "roll": 0.0,
+                    "pitch": 0.0,
+                    "yaw": 180.0
+                }
+            ],
+            "fov": 110.0,
+            "image_size_x": 1280,
+            "image_size_y": 960
+        },
+        {
+            "type": "sensor.camera.optical_flow",
+            "role_name": "optical_flow_camera-back",
+            "transform": [
+                {
+                    "x": -1.34,
+                    "y": 0.0,
+                    "z": 1.7,
+                    "roll": 0.0,
+                    "pitch": 0.0,
+                    "yaw": 180.0
+                }
+            ],
+            "fov": 110.0,
+            "image_size_x": 1280,
+            "image_size_y": 960
+        },
+        {
+            "type": "sensor.camera.depth",
+            "role_name": "depth_camera-back",
+            "transform": [
+                {
+                    "x": -1.34,
+                    "y": 0.0,
+                    "z": 1.7,
+                    "roll": 0.0,
+                    "pitch": 0.0,
+                    "yaw": 180.0
+                }
+            ],
+            "fov": 110.0,
+            "image_size_x": 1280,
+            "image_size_y": 960
+        },
+        {
+            "type": "sensor.camera.rgb",
+            "role_name": "rgb_camera-back",
+            "transform": [
+                {
+                    "x": -1.34,
+                    "y": 0.0,
+                    "z": 1.7,
+                    "roll": 0.0,
+                    "pitch": 0.0,
+                    "yaw": 180.0
+                }
+            ],
+            "fov": 110.0,
+            "image_size_x": 1280,
+            "image_size_y": 960
+        },
+        {
+            "type": "sensor.lidar.ray_cast_semantic",
+            "role_name": "ray_cast_semantic-back-left",
+            "transform": [
+                {
+                    "x": 0.0,
+                    "y": -0.462712,
+                    "z": 1.7,
+                    "roll": 0.0,
+                    "pitch": 0.0,
+                    "yaw": -110.0
+                }
+            ],
+            "range": 1000,
+            "channels": 64,
+            "points_per_second": 3000000,
+            "upper_fov": 30.0,
+            "lower_fov": -60,
+            "horizontal_fov": 360,
+            "rotation_frequency": 60
+        },
+        {
+            "type": "sensor.lidar.ray_cast_semantic",
+            "role_name": "ray_cast_semantic-back-left-2",
+            "transform": [
+                {
+                    "x": 0.0,
+                    "y": -0.462712,
+                    "z": 1.7,
+                    "roll": 0.0,
+                    "pitch": 0.0,
+                    "yaw": -110.0
+                }
+            ],
+            "range": 1000,
+            "channels": 64,
+            "points_per_second": 3000000,
+            "upper_fov": 50.0,
+            "lower_fov": -50,
+            "horizontal_fov": 360,
+            "rotation_frequency": 90
+        },
+        {
+            "type": "sensor.camera.semantic_segmentation",
+            "role_name": "semantic_segmentation_camera-back-left",
+            "transform": [
+                {
+                    "x": 0.0,
+                    "y": -0.462712,
+                    "z": 1.7,
+                    "roll": 0.0,
+                    "pitch": 0.0,
+                    "yaw": -110.0
+                }
+            ],
+            "fov": 70.0,
+            "image_size_x": 1280,
+            "image_size_y": 960
+        },
+        {
+            "type": "sensor.camera.instance_segmentation",
+            "role_name": "instance_segmentation_camera-back-left",
+            "transform": [
+                {
+                    "x": 0.0,
+                    "y": -0.462712,
+                    "z": 1.7,
+                    "roll": 0.0,
+                    "pitch": 0.0,
+                    "yaw": -110.0
+                }
+            ],
+            "fov": 70.0,
+            "image_size_x": 1280,
+            "image_size_y": 960
+        },
+        {
+            "type": "sensor.camera.dvs",
+            "role_name": "dvs_camera-back-left",
+            "transform": [
+                {
+                    "x": 0.0,
+                    "y": -0.462712,
+                    "z": 1.7,
+                    "roll": 0.0,
+                    "pitch": 0.0,
+                    "yaw": -110.0
+                }
+            ],
+            "fov": 70.0,
+            "image_size_x": 1280,
+            "image_size_y": 960
+        },
+        {
+            "type": "sensor.camera.optical_flow",
+            "role_name": "optical_flow_camera-back-left",
+            "transform": [
+                {
+                    "x": 0.0,
+                    "y": -0.462712,
+                    "z": 1.7,
+                    "roll": 0.0,
+                    "pitch": 0.0,
+                    "yaw": -110.0
+                }
+            ],
+            "fov": 70.0,
+            "image_size_x": 1280,
+            "image_size_y": 960
+        },
+        {
+            "type": "sensor.camera.depth",
+            "role_name": "depth_camera-back-left",
+            "transform": [
+                {
+                    "x": 0.0,
+                    "y": -0.462712,
+                    "z": 1.7,
+                    "roll": 0.0,
+                    "pitch": 0.0,
+                    "yaw": -110.0
+                }
+            ],
+            "fov": 70.0,
+            "image_size_x": 1280,
+            "image_size_y": 960
+        },
+        {
+            "type": "sensor.camera.rgb",
+            "role_name": "rgb_camera-back-left",
+            "transform": [
+                {
+                    "x": 0.0,
+                    "y": -0.462712,
+                    "z": 1.7,
+                    "roll": 0.0,
+                    "pitch": 0.0,
+                    "yaw": -110.0
+                }
+            ],
+            "fov": 70.0,
+            "image_size_x": 1280,
+            "image_size_y": 960
+        },
+        {
+            "type": "sensor.lidar.ray_cast_semantic",
+            "role_name": "ray_cast_semantic-back-right",
+            "transform": [
+                {
+                    "x": 0,
+                    "y": 0.462712,
+                    "z": 1.7,
+                    "roll": 0.0,
+                    "pitch": 0.0,
+                    "yaw": 110.0
+                }
+            ],
+            "range": 1000,
+            "channels": 64,
+            "points_per_second": 3000000,
+            "upper_fov": 30.0,
+            "lower_fov": -60,
+            "horizontal_fov": 360,
+            "rotation_frequency": 60
+        },
+        {
+            "type": "sensor.lidar.ray_cast_semantic",
+            "role_name": "ray_cast_semantic-back-right-2",
+            "transform": [
+                {
+                    "x": 0,
+                    "y": 0.462712,
+                    "z": 1.7,
+                    "roll": 0.0,
+                    "pitch": 0.0,
+                    "yaw": 110.0
+                }
+            ],
+            "range": 1000,
+            "channels": 64,
+            "points_per_second": 3000000,
+            "upper_fov": 50.0,
+            "lower_fov": -50,
+            "horizontal_fov": 360,
+            "rotation_frequency": 90
+        },
+        {
+            "type": "sensor.camera.semantic_segmentation",
+            "role_name": "semantic_segmentation_camera-back-right",
+            "transform": [
+                {
+                    "x": 0,
+                    "y": 0.462712,
+                    "z": 1.7,
+                    "roll": 0.0,
+                    "pitch": 0.0,
+                    "yaw": 110.0
+                }
+            ],
+            "fov": 70.0,
+            "image_size_x": 1280,
+            "image_size_y": 960
+        },
+        {
+            "type": "sensor.camera.instance_segmentation",
+            "role_name": "instance_segmentation_camera-back-right",
+            "transform": [
+                {
+                    "x": 0,
+                    "y": 0.462712,
+                    "z": 1.7,
+                    "roll": 0.0,
+                    "pitch": 0.0,
+                    "yaw": 110.0
+                }
+            ],
+            "fov": 70.0,
+            "image_size_x": 1280,
+            "image_size_y": 960
+        },
+        {
+            "type": "sensor.camera.dvs",
+            "role_name": "dvs_camera-back-right",
+            "transform": [
+                {
+                    "x": 0,
+                    "y": 0.462712,
+                    "z": 1.7,
+                    "roll": 0.0,
+                    "pitch": 0.0,
+                    "yaw": 110.0
+                }
+            ],
+            "fov": 70.0,
+            "image_size_x": 1280,
+            "image_size_y": 960
+        },
+        {
+            "type": "sensor.camera.optical_flow",
+            "role_name": "optical_flow_camera-back-right",
+            "transform": [
+                {
+                    "x": 0,
+                    "y": 0.462712,
+                    "z": 1.7,
+                    "roll": 0.0,
+                    "pitch": 0.0,
+                    "yaw": 110.0
+                }
+            ],
+            "fov": 70.0,
+            "image_size_x": 1280,
+            "image_size_y": 960
+        },
+        {
+            "type": "sensor.camera.depth",
+            "role_name": "depth_camera-back-right",
+            "transform": [
+                {
+                    "x": 0,
+                    "y": 0.462712,
+                    "z": 1.7,
+                    "roll": 0.0,
+                    "pitch": 0.0,
+                    "yaw": 110.0
+                }
+            ],
+            "fov": 70.0,
+            "image_size_x": 1280,
+            "image_size_y": 960
+        },
+        {
+            "type": "sensor.camera.rgb",
+            "role_name": "rgb_camera-back-right",
+            "transform": [
+                {
+                    "x": 0,
+                    "y": 0.462712,
+                    "z": 1.7,
+                    "roll": 0.0,
+                    "pitch": 0.0,
+                    "yaw": 110.0
                 }
             ],
             "fov": 70.0,

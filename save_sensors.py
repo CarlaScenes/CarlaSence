@@ -156,7 +156,6 @@ class ClientSideBoundingBoxes(object):
     @staticmethod
     def _bounding_box_to_world(bbox):
         extent = bbox.extent
-        print(extent)
         cords = np.zeros((8, 4))
         cords[0, :] = np.array([extent.x, extent.y, -extent.z, 1])
         cords[1, :] = np.array([-extent.x, extent.y, -extent.z, 1])
@@ -197,17 +196,13 @@ class ClientSideBoundingBoxes(object):
 edges = [[0,1], [1,3], [3,2], [2,0], [0,4], [4,5], [5,1], [5,7], [7,6], [6,4], [6,2], [7,3]]
 
 def saveAllSensors(out_root_folder, sensor_datas, sensor_types, world):
-    print("saveAllSensors")
     try:
-    #     # print("in here")
         (sensor_data, sensor, vehicle) = sensor_datas[0]
     except:
-        # print("in here ??")
         (sensor_data, sensor) = sensor_datas[0]
     # except Exception as error:
     #             print("An exception occurred in rgb_camera:", error)
     #             traceback.print_exc()
-    print(sensor, sensor_data)
     saveSnapshot(out_root_folder, sensor_data)
     sensor_datas.pop(0)
 
@@ -225,7 +220,7 @@ def saveAllSensors(out_root_folder, sensor_datas, sensor_types, world):
                 (sensor_data, sensor) = sensor_datas[i]
                 vehicle = None
             except Exception as error:
-                print("An exception occurred in rgb_camera:", error)
+                print("An exception occurred in saveAllSensors:", error)
                 traceback.print_exc()
         sensor_name = sensor_types[i]
 
@@ -240,7 +235,6 @@ def saveAllSensors(out_root_folder, sensor_datas, sensor_types, world):
             pass
 
         if(sensor_name.find('semantic_segmentation_camera') != -1):
-            print(sensor_name)
             sematic_seg_camera[sensor_name] = sensor_data
             saveSegImage(sensor_data, os.path.join(out_root_folder, sensor_name))
 
@@ -256,7 +250,7 @@ def saveAllSensors(out_root_folder, sensor_datas, sensor_types, world):
                 depth = sensor_name.replace("rgb", "depth")
                 saveRgbImage(sensor_data, os.path.join(out_root_folder, sensor_name), world, sensor, vehicle, ray_cast[ray_cast_sensor], ray_cast[f"{ray_cast_sensor}-2"], dvs_camera[dvs], depth_camera[depth])
             except Exception as error:
-                print("An exception occurred in rgb_camera:", error)
+                print("An exception occurred in rgb_camera sensor find:", error)
                 traceback.print_exc()
 
         if(sensor_name.find('imu') != -1):
@@ -379,7 +373,8 @@ def save_coco_format(bounding_boxes, file_path, id, image_filename, image_w, ima
         "car": 1,
         "truck": 2,
         "van": 3,
-        "pedestrian": 4
+        "pedestrian": 4,
+        "motorcycle": 5,
     }
     
     coco_data = {
@@ -397,7 +392,8 @@ def save_coco_format(bounding_boxes, file_path, id, image_filename, image_w, ima
             {"id": 1, "name": "car", "supercategory": "vehicle"},
             {"id": 2, "name": "truck", "supercategory": "vehicle"},
             {"id": 3, "name": "van", "supercategory": "vehicle"},
-            {"id": 4, "name": "pedestrian", "supercategory": "human"}
+            {"id": 4, "name": "pedestrian", "supercategory": "human"},
+            {"id": 5, "name": "motorcycle", "supercategory": "vehicle"}
         ]
     }
     for obj_id, class_name, bbox in bounding_boxes:
@@ -581,7 +577,6 @@ def is_dvs_event_inside_bbox(event, x_min,y_min, x_max, y_max):
 
 def dvs_callback(data, filepath):
     timestamp = data.timestamp
-    print(filepath, timestamp)
     dvs_events = np.frombuffer(data.raw_data, dtype=np.dtype([
         ('x', np.uint16), ('y', np.uint16), ('t', np.int64), ('pol', np.bool)]))
     dvs_img = np.zeros((data.height, data.width, 3), dtype=np.uint8)

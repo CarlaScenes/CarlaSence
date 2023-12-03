@@ -3,7 +3,7 @@
         {
             "type": "sensor.lidar.ray_cast_semantic",
             "role_name": "ray_cast_semantic",
-            "range": 2000,
+            "range": 20000,
             "channels": 64,
             "points_per_second": 3000000,
             "upper_fov": 30.0,
@@ -14,7 +14,7 @@
         {
             "type": "sensor.lidar.ray_cast_semantic",
             "role_name": "ray_cast_semantic-2",
-            "range": 2000,
+            "range": 20000,
             "channels": 64,
             "points_per_second": 3000000,
             "upper_fov": 50.0,

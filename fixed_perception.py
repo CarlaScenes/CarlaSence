@@ -45,7 +45,6 @@ class FixedPerception:
     def getSensorData(self, frame_id):
         try:
             data = [self._retrieve_data(q, frame_id) for q in self.queues]
-            print("yes")
             return data
         except Exception as error:
             print("An exception occurred:", error)
