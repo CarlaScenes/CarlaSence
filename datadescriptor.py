@@ -162,9 +162,9 @@ class KittiDescriptor:
         self.location = location
         self.rotation_y = rotation_y
         self.extent = extent
-        self._valid_classes = ['Car', 'Van', 'Truck',
-                               'Pedestrian', 'Person_sitting', 'Cyclist', 'Tram',
-                               'Misc', 'DontCare']
+        self._valid_classes = ['car', 'van', 'truck',
+                               'pedestrian',
+                               'misc', 'motorcycle']
         self.object_id = 0
 
     def set_type(self, obj_type: str):

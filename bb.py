@@ -404,9 +404,9 @@ def transforms_from_agent(agent):
     obj_type = None
 
     if 'pedestrian' in agent.type_id:
-        obj_type = 'Pedestrian'
+        obj_type = 'pedestrian'
     elif 'vehicle' in agent.type_id:
-        obj_type = 'Car'
+        obj_type = agent.attributes.get('base_type')
 
     if obj_type is None:
         return None, None, None, None, None
