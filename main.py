@@ -4,6 +4,8 @@ import subprocess
 import glob
 import shutil
 import os
+import concurrent.futures
+
 try:
     sys.path.append(glob.glob('./carla-*%d.%d-%s.egg' % (
         sys.version_info.major,
@@ -144,6 +146,33 @@ def main():
 
     print("Starting simulation...")
 
+    def process_egos(i, frame_id):
+        print(f"Process {i} @ {frame_id}")
+        data = egos[i].getSensorData(frame_id)
+        output_folder = os.path.join(
+            SimulationParams.data_output_subfolder, "ego" + str(i))
+        try:
+            save_sensors.saveAllSensors(
+                output_folder, data, egos[i].sensor_names, world)
+            control = egos[i].ego.get_control()
+            angle = control.steer
+            save_sensors.saveSteeringAngle(angle, output_folder)
+        except Exception as error:
+            print("An exception occurred in egos - perception and control saving:", error)
+            traceback.print_exc()
+
+    def process_fixed(i, frame_id):
+        print(f"Process {i} @ {frame_id}")
+        data = fixed[i].getSensorData(frame_id)
+        output_folder = os.path.join(
+            SimulationParams.data_output_subfolder, "fixed-" + str(i+1))
+        try:
+            save_sensors.saveAllSensors(
+                output_folder, data, fixed[i].sensor_names, world)
+        except Exception as error:
+            print("An exception occurred in fixed - perception saving:", error)
+            traceback.print_exc()
+
     k = 0
     run_intersection = False
 
@@ -155,35 +184,18 @@ def main():
                     k = k + 1
                     print(k)
                     continue
+                
+                print("*****EGO VEHICLE*****")
+                with concurrent.futures.ThreadPoolExecutor() as executor:
+                    futures = [executor.submit(process_egos, i, frame_id ) for i in range(len(egos))]
+                    concurrent.futures.wait(futures)
 
-                for i in range(len(egos)):
-                    data = egos[i].getSensorData(frame_id)
+                print("*****FIXED PERCEPTION*****")
 
-                    output_folder = os.path.join(
-                        SimulationParams.data_output_subfolder, "ego" + str(i))
+                with concurrent.futures.ThreadPoolExecutor() as executor:
+                    futures = [executor.submit(process_fixed, i, frame_id ) for i in range(len(fixed))]
+                    concurrent.futures.wait(futures)
 
-                    print("- ego - vehcile -")
-
-                    save_sensors.saveAllSensors(
-                        output_folder, data, egos[i].sensor_names, world)
-
-                    control = egos[i].ego.get_control()
-                    angle = control.steer
-                    save_sensors.saveSteeringAngle(angle, output_folder)
-
-                print("- fixed - perception -")
-
-                for i in range(len(fixed)):
-
-                    data = fixed[i].getSensorData(frame_id)
-                    output_folder = os.path.join(
-                        SimulationParams.data_output_subfolder, "fixed-" + str(i+1))
-                    try:
-                        save_sensors.saveAllSensors(
-                            output_folder, data, fixed[i].sensor_names, world)
-                    except Exception as error:
-                        print("An exception occurred in fixed - perception saving:", error)
-                        traceback.print_exc()
                 print("new frame!")
     finally:
         # stop pedestrians (list is [controller, actor, controller, actor ...])
