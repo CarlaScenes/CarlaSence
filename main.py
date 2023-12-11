@@ -178,6 +178,27 @@ def main():
             print("An exception occurred in fixed - perception saving:", error)
             traceback.print_exc()
 
+    def interpolate_weather(start_weather, end_weather, progress):
+        weather = carla.WeatherParameters(
+            cloudiness=start_weather.cloudiness + (end_weather.cloudiness - start_weather.cloudiness) * progress,
+            precipitation=start_weather.precipitation + (end_weather.precipitation - start_weather.precipitation) * progress,
+            precipitation_deposits=start_weather.precipitation_deposits + (end_weather.precipitation_deposits - start_weather.precipitation_deposits) * progress,
+            wind_intensity=start_weather.wind_intensity + (end_weather.wind_intensity - start_weather.wind_intensity) * progress,
+            sun_azimuth_angle=start_weather.sun_azimuth_angle + (end_weather.sun_azimuth_angle - start_weather.sun_azimuth_angle) * progress,
+            sun_altitude_angle=start_weather.sun_altitude_angle + (end_weather.sun_altitude_angle - start_weather.sun_altitude_angle) * progress,
+            dust_storm=start_weather.dust_storm,
+            mie_scattering_scale=start_weather.mie_scattering_scale,
+            rayleigh_scattering_scale=start_weather.rayleigh_scattering_scale,
+            scattering_intensity=start_weather.scattering_intensity + (end_weather.scattering_intensity - start_weather.scattering_intensity) * progress,
+            wetness=start_weather.wetness + (end_weather.wetness - start_weather.wetness) * progress
+        )
+        return weather
+    
+    start_weather = carla.WeatherParameters.CloudyNoon
+    end_weather = carla.WeatherParameters.CloudyNight
+    world.set_weather(start_weather)
+    duration = 9000
+    step = 0
     k = 0
     run_intersection = False
 
@@ -190,6 +211,11 @@ def main():
                     print(k)
                     continue
                 
+                if step > duration:
+                    break
+
+                step = step + 1
+
                 print("*****EGO VEHICLE*****")
                 with concurrent.futures.ThreadPoolExecutor() as executor:
                     futures = [executor.submit(process_egos, i, frame_id ) for i in range(len(egos))]
@@ -200,7 +226,12 @@ def main():
                 with concurrent.futures.ThreadPoolExecutor() as executor:
                     futures = [executor.submit(process_fixed, i, frame_id ) for i in range(len(fixed))]
                     concurrent.futures.wait(futures)
-
+                
+                if step > duration:
+                    break
+                progress = step / duration
+                current_weather = interpolate_weather(start_weather, end_weather, progress)
+                world.set_weather(current_weather)
                 print("new frame!")
     finally:
         # stop pedestrians (list is [controller, actor, controller, actor ...])
