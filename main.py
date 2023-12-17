@@ -145,7 +145,6 @@ def main():
     print("Starting simulation...")
 
     def process_egos(i, frame_id):
-        print(f"Process {i} @ {frame_id}")
         data = egos[i].getSensorData(frame_id)
         output_folder = os.path.join(
             SimulationParams.data_output_subfolder, "ego" + str(i))
@@ -160,7 +159,6 @@ def main():
             traceback.print_exc()
 
     def process_fixed(i, frame_id):
-        print(f"Process {i} @ {frame_id}")
         data = fixed[i].getSensorData(frame_id)
         output_folder = os.path.join(
             SimulationParams.data_output_subfolder, "fixed-" + str(i+1))
@@ -187,10 +185,8 @@ def main():
         )
         return weather
     
-    start_weather = carla.WeatherParameters.CloudyNoon
-    end_weather = carla.WeatherParameters.CloudyNight
-
-    
+    start_weather = carla.WeatherParameters.ClearNoon
+    end_weather = carla.WeatherParameters.ClearNoon
 
     world.set_weather(start_weather)
     duration = 9000
@@ -219,7 +215,6 @@ def main():
                 frame_id = sync_mode.tick(timeout=5.0)
                 if (k < SimulationParams.ignore_first_n_ticks):
                     k = k + 1
-                    print(k)
                     continue
                 
                 if step > duration:
@@ -227,12 +222,9 @@ def main():
 
                 step = step + 1
 
-                print("*****EGO VEHICLE*****")
                 with concurrent.futures.ThreadPoolExecutor() as executor:
                     futures = [executor.submit(process_egos, i, frame_id ) for i in range(len(egos))]
                     concurrent.futures.wait(futures)
-
-                print("*****FIXED PERCEPTION*****")
 
                 with concurrent.futures.ThreadPoolExecutor() as executor:
                     futures = [executor.submit(process_fixed, i, frame_id ) for i in range(len(fixed))]
@@ -240,9 +232,9 @@ def main():
                 
                 if step > duration:
                     break
-                progress = step / duration
-                current_weather = interpolate_weather(start_weather, end_weather, progress)
-                world.set_weather(current_weather)
+                # progress = step / duration
+                # current_weather = interpolate_weather(start_weather, end_weather, progress)
+                # world.set_weather(current_weather)
                 print("new frame!")
     finally:
         # stop pedestrians (list is [controller, actor, controller, actor ...])
