@@ -95,15 +95,8 @@ def main():
 
     blueprint_library = world.get_blueprint_library()
 
-    for name, value in weather_presets:
-        if name == args.weather:
-            SimulationParams.weather = value
-            break
-
     # Setup
     setupWorld(world)
-    if SimulationParams.weather is not None:
-        setupWorldWeather(world, SimulationParams.weather)
     setupTrafficManager(client)
 
     # Get all required blueprints
@@ -185,15 +178,9 @@ def main():
         )
         return weather
     
-    start_weather = carla.WeatherParameters.ClearNoon
-    end_weather = carla.WeatherParameters.ClearNoon
-
-    world.set_weather(start_weather)
+    start_weather = "carla.WeatherParameters.ClearNoon"
+    end_weather = "carla.WeatherParameters.ClearNoon"
     duration = 9000
-    step = 0
-    k = 0
-    run_intersection = False
-
     metadata = {
         "start_weather": start_weather,
         "end_weather": end_weather,
@@ -205,6 +192,22 @@ def main():
         "egos": len(egos),
         "fixed-views": len(fixed)
     }
+
+    for name, value in weather_presets:
+        if name == start_weather:
+            start_weather = value
+            break
+    
+    for name, value in weather_presets:
+        if name == end_weather:
+            end_weather = value
+            break
+
+    world.set_weather(start_weather)
+    
+    step = 0
+    k = 0
+    
     json_string = json.dumps(metadata, indent=4)
     file_path = f'./out/metadata-{datetime.now().strftime("%Y%m%d%H%M%S")}.json'
     with open(file_path, "w") as file:
