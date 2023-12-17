@@ -523,25 +523,24 @@ def saveRgbImage(output, filepath, world, sensor, ego_vehicle, raycast_detection
                         dvsbb.append( (vehicle.id, 'pedestrian', ( min_x, min_y, min_x + xdiff, min_y + ydiff )) )
 
         output_file = os.path.join(
-        filepath, f'{output.frame}.png')
+        filepath, f'/rgb/{output.frame}.png')
         cv2.imwrite(output_file, img)
 
-        output_file = os.path.join(filepath, f'dvs-{output.frame}.png')
+        output_file = os.path.join(filepath, f'/dvs/{output.frame}.png')
         pygame.image.save(surface, output_file)
 
         save_pascal_voc_format(rgbbb, os.path.join(
-        filepath, f'{output.frame}.xml'), f'{output.frame}.png', output.width, output.height)
+        filepath, f'/rgb/voc/{output.frame}.xml'), f'{output.frame}.png', output.width, output.height)
         save_coco_format(rgbbb, os.path.join(
-        filepath, f'{output.frame}.json'), output.frame, f'{output.frame}.png', output.width, output.height)
+        filepath, f'/rgb/coco/{output.frame}.json'), output.frame, f'{output.frame}.png', output.width, output.height)
 
         save_pascal_voc_format(dvsbb, os.path.join(
-        filepath, f'dvs-{output.frame}.xml'), f'dvs-{output.frame}.png', output.width, output.height)
-
+        filepath, f'/dvs/voc/{output.frame}.xml'), f'dvs-{output.frame}.png', output.width, output.height)
         save_coco_format(dvsbb, os.path.join(
-        filepath, f'dvs-{output.frame}.json'), output.frame, f'dvs-{output.frame}.png', output.width, output.height)
+        filepath, f'/dvs/coco/{output.frame}.json'), output.frame, f'dvs-{output.frame}.png', output.width, output.height)
 
-        save_kitti_3d_format(kitti3dbb, os.path.join(filepath, f'{output.frame}.txt'))
-        save_kitti_3d_format(kitti3dbbDVS, os.path.join(filepath, f'dvs-{output.frame}.txt'))
+        save_kitti_3d_format(kitti3dbb, os.path.join(filepath, f'/rgb/kitti/{output.frame}.txt'))
+        save_kitti_3d_format(kitti3dbbDVS, os.path.join(filepath, f'/dvs/kitti/{output.frame}.txt'))
 
     except Exception as error:
         print("An exception occurred:", error)

@@ -122,7 +122,7 @@ def main():
         sensor_locations = json.load(json_file)
 
     map_name = world.get_map().name
-    
+    SimulationParams.town_map = map_name.split("/")[-1]
     for config_entry in sensor_locations:
         if config_entry["town"] == map_name:
             for coordinate in config_entry["cordinates"]:
