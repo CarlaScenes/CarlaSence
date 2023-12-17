@@ -75,7 +75,7 @@ class EgoVehicle:
 
     def _retrieve_data(self, sensor_queue, frame_id):
         while True:
-            data = sensor_queue.get(timeout=5.0)
+            data = sensor_queue.get(timeout=60.0)
             sensor = None
             if sensor_queue in self.sensor_q_map:
                 sensor = self.sensor_q_map[sensor_queue]

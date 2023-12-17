@@ -5,6 +5,7 @@ import glob
 import shutil
 import os
 import concurrent.futures
+from datetime import datetime
 
 try:
     sys.path.append(glob.glob('./carla-*%d.%d-%s.egg' % (
@@ -127,9 +128,6 @@ def main():
             for coordinate in config_entry["cordinates"]:
                 fixed.append(FixedPerception(SimulationParams.fixed_perception_sensor_json_filepath, None, world, args, coordinate) )
 
-    # Spawn npc actors
-    # w_all_actors = []
-    # w_all_id = []
     w_all_actors, w_all_id = spawnWalkers(
         client, world, blueprintsWalkers, SimulationParams.num_of_walkers)
     
@@ -143,12 +141,7 @@ def main():
         client, world, vehicles_spawn_points, blueprintsVehicles, SimulationParams.num_of_vehicles)
     world.tick()
 
-    spectator = world.get_spectator()
-    if (SimulationParams.number_of_ego_vehicles > 0):
-        transform = egos[0].ego.get_transform()
-        spectator.set_transform(carla.Transform(
-            transform.location + carla.Location(z=100), carla.Rotation(pitch=-90)))
-
+    
     print("Starting simulation...")
 
     def process_egos(i, frame_id):
@@ -196,12 +189,30 @@ def main():
     
     start_weather = carla.WeatherParameters.CloudyNoon
     end_weather = carla.WeatherParameters.CloudyNight
+
+    
+
     world.set_weather(start_weather)
     duration = 9000
     step = 0
     k = 0
     run_intersection = False
 
+    metadata = {
+        "start_weather": start_weather,
+        "end_weather": end_weather,
+        "duration": duration,
+        "map_name": map_name,
+        "num_of_walkers": SimulationParams.num_of_walkers,
+        "num_of_vehicles": SimulationParams.num_of_vehicles,
+        "delta_seconds": SimulationParams.delta_seconds,
+        "egos": len(egos),
+        "fixed-views": len(fixed)
+    }
+    json_string = json.dumps(metadata, indent=4)
+    file_path = f'./out/metadata-{datetime.now().strftime("%Y%m%d%H%M%S")}.json'
+    with open(file_path, "w") as file:
+        file.write(json_string)
     try:
         with CarlaSyncMode(world, []) as sync_mode:
             while True:

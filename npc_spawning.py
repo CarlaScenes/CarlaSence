@@ -13,17 +13,17 @@ FutureActor = carla.command.FutureActor
 def spawnVehicles(client, world, spawn_points, blueprintsVehicles, number):
     print("Spawning vehicles...")
     customBp = {
-        'vehicle.carlamotors.firetruck': 2,
-        'vehicle.ford.ambulance': 2,
-        'vehicle.dodge.charger_police': 10,
-        'vehicle.mercedes.coupe': 10,
-        'vehicle.tesla.model3': 15,
-        'vehicle.jeep.wrangler_rubicon': 15,
+        'vehicle.carlamotors.firetruck': 5,
+        'vehicle.ford.ambulance': 5,
+        'vehicle.dodge.charger_police': 6,
+        'vehicle.mercedes.coupe': 8,
+        'vehicle.tesla.model3': 14,
+        'vehicle.jeep.wrangler_rubicon': 13,
         'vehicle.ford.mustang': 10,
-        'vehicle.toyota.prius': 18,
-        'vehicle.kawasaki.ninja': 6,
-        'vehicle.vespa.zx125': 6,
-        'vehicle.harley-davidson.low_rider': 6,
+        'vehicle.toyota.prius': 12,
+        'vehicle.kawasaki.ninja': 9,
+        'vehicle.vespa.zx125': 9,
+        'vehicle.harley-davidson.low_rider': 9,
     }
         
     batch = []
