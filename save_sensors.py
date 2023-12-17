@@ -524,7 +524,6 @@ def saveRgbImage(output, filepath, world, sensor, ego_vehicle, raycast_detection
 
         output_file = os.path.join(
         filepath, f'{output.frame}.png')
-        print(output_file, filepath)
         cv2.imwrite(output_file, img)
 
         output_file = os.path.join(filepath, f'dvs-{output.frame}.png')
