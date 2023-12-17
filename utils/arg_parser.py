@@ -36,7 +36,7 @@ class CommandLineArgsParser:
         self.parser.add_argument(
             '-t', '--timeout',
             metavar='T',
-            default=10,
+            default=60,
             type=int,
             help='Timeout while trying to establish connection to CARLA server')
         self.parser.add_argument(
