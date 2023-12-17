@@ -473,7 +473,7 @@ def saveRgbImage(output, filepath, world, sensor, ego_vehicle, raycast_detection
                     center_x, center_y = center
                     if datapoint is not None:
                         kitti3dbb.append(datapoint)
-                        rgbbb.append( (vehicle.id, vehicle.attributes.get('base_type'), ( min_x, min_y, min_x + xdiff, min_y + ydiff )) )
+                        rgbbb.append( (vehicle.id, vehicle.attributes.get('base_type'), ( min_x, min_y, xdiff, ydiff )) )
                         # cv2.line(img, points[0], points[1], (0, 0, 255), 1)
                         # cv2.line(img, points[0], points[1], (0, 0, 255), 1)
                         # cv2.line(img, points[1], points[2], (0, 0, 255), 1)
