@@ -13,19 +13,21 @@ FutureActor = carla.command.FutureActor
 def spawnVehicles(client, world, spawn_points, blueprintsVehicles, number):
     print("Spawning vehicles...")
     customBp = {
-        'vehicle.carlamotors.firetruck': 5,
-        'vehicle.ford.ambulance': 5,
+        'vehicle.carlamotors.firetruck': 7,
+        'vehicle.ford.ambulance': 7,
         'vehicle.dodge.charger_police': 6,
         'vehicle.mercedes.coupe': 8,
-        'vehicle.tesla.model3': 14,
-        'vehicle.jeep.wrangler_rubicon': 13,
-        'vehicle.ford.mustang': 10,
-        'vehicle.toyota.prius': 12,
-        'vehicle.kawasaki.ninja': 9,
-        'vehicle.vespa.zx125': 9,
-        'vehicle.harley-davidson.low_rider': 9,
+        'vehicle.tesla.model3': 6,
+        'vehicle.audi.a2': 5,
+        'vehicle.jeep.wrangler_rubicon': 7,
+        'vehicle.tesla.cybertruck': 3,
+        'vehicle.ford.mustang': 7,
+        'vehicle.toyota.prius': 8,
+        'vehicle.kawasaki.ninja': 12,
+        'vehicle.vespa.zx125': 12,
+        'vehicle.harley-davidson.low_rider': 12,
     }
-        
+
     batch = []
     if number < 10:
         for i in range(number):
@@ -34,9 +36,9 @@ def spawnVehicles(client, world, spawn_points, blueprintsVehicles, number):
             batch.append(carla.command.SpawnActor(vehicle_bp, spawn_point).then(
                 carla.command.SetAutopilot(carla.command.FutureActor, True)))
     else:
-        
+
         for model, percentage in customBp.items():
-            num_per_blueprint = math.floor((number * percentage)/100) 
+            num_per_blueprint = math.floor((number * percentage)/100)
             vehicle_bp = world.get_blueprint_library().find(model)
             for _ in range(num_per_blueprint):
                 spawn_point = random.choice(spawn_points)

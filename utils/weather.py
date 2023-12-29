@@ -1,5 +1,6 @@
 import carla
 
+
 def get_foggy(w):
     weather = carla.WeatherParameters(cloudiness=w.cloudiness,
                                       precipitation=w.precipitation,
@@ -18,15 +19,30 @@ def get_foggy(w):
     weather.fog_falloff = 2.0
     return weather
 
+
 weather_presets = [
-    ("carla.WeatherParameters.ClearNoon", carla.WeatherParameters.ClearNoon),
-    ("carla.WeatherParameters.MidRainyNoon", carla.WeatherParameters.MidRainyNoon),
-    ("carla.WeatherParameters.ClearSunset", carla.WeatherParameters.ClearSunset),
-    ("carla.WeatherParameters.MidRainSunset",
-     carla.WeatherParameters.MidRainSunset),
-    ("carla.WeatherParameters.ClearNight", carla.WeatherParameters.ClearNight),
-    ("carla.WeatherParameters.MidRainyNight",
-     carla.WeatherParameters.MidRainyNight),
+    ("ClearNoon", carla.WeatherParameters.ClearNoon),
+    ("CloudyNoon", carla.WeatherParameters.CloudyNoon),
+    ("WetNoon", carla.WeatherParameters.WetNoon),
+    ("WetCloudyNoon", carla.WeatherParameters.WetCloudyNoon),
+    ("MidRainyNoon", carla.WeatherParameters.MidRainyNoon),
+    ("HardRainNoon", carla.WeatherParameters.HardRainNoon),
+    ("SoftRainNoon", carla.WeatherParameters.SoftRainNoon),
+    ("ClearSunset", carla.WeatherParameters.ClearSunset),
+    ("CloudySunset", carla.WeatherParameters.CloudySunset),
+    ("WetSunset", carla.WeatherParameters.WetSunset),
+    ("WetCloudySunset", carla.WeatherParameters.WetCloudySunset),
+    ("MidRainSunset", carla.WeatherParameters.MidRainSunset),
+    ("HardRainSunset", carla.WeatherParameters.HardRainSunset),
+    ("SoftRainSunset", carla.WeatherParameters.SoftRainSunset),
+    ("ClearNight", carla.WeatherParameters.ClearNight),
+    ("CloudyNight", carla.WeatherParameters.CloudyNight),
+    ("WetNight", carla.WeatherParameters.WetNight),
+    ("WetCloudyNight", carla.WeatherParameters.WetCloudyNight),
+    ("SoftRainNight", carla.WeatherParameters.SoftRainNight),
+    ("MidRainyNight", carla.WeatherParameters.MidRainyNight),
+    ("HardRainNight", carla.WeatherParameters.HardRainNight),
+    ("DustStorm", carla.WeatherParameters.DustStorm)
     ("FoggyNoon", get_foggy(carla.WeatherParameters.ClearNoon)),
     ("FoggySunset", get_foggy(carla.WeatherParameters.ClearSunset)),
     ("FoggyNight", get_foggy(carla.WeatherParameters.ClearNight)),
