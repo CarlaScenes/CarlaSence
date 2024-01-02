@@ -14,8 +14,8 @@ def get_foggy(w):
                                       scattering_intensity=w.scattering_intensity,
                                       wetness=w.wetness
                                       )
-    weather.fog_density = 50
-    weather.fog_distance = 20.0
+    weather.fog_density = 35
+    weather.fog_distance = 17.5
     weather.fog_falloff = 2.0
     return weather
 
@@ -42,7 +42,7 @@ weather_presets = [
     ("SoftRainNight", carla.WeatherParameters.SoftRainNight),
     ("MidRainyNight", carla.WeatherParameters.MidRainyNight),
     ("HardRainNight", carla.WeatherParameters.HardRainNight),
-    ("DustStorm", carla.WeatherParameters.DustStorm)
+    ("DustStorm", carla.WeatherParameters.DustStorm),
     ("FoggyNoon", get_foggy(carla.WeatherParameters.ClearNoon)),
     ("FoggySunset", get_foggy(carla.WeatherParameters.ClearSunset)),
     ("FoggyNight", get_foggy(carla.WeatherParameters.ClearNight)),

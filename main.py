@@ -165,25 +165,32 @@ def main():
         weather = carla.WeatherParameters(
             cloudiness=start_weather.cloudiness +
             (end_weather.cloudiness - start_weather.cloudiness) * progress,
+            dust_storm=start_weather.dust_storm +
+            (end_weather.dust_storm - start_weather.dust_storm) * progress,
+            fog_density=start_weather.fog_density +
+            (end_weather.fog_density - start_weather.fog_density) * progress,
+            fog_distance=start_weather.fog_distance +
+            (end_weather.fog_distance - start_weather.fog_distance) * progress,
+            fog_falloff=start_weather.fog_falloff +
+            (end_weather.fog_falloff - start_weather.fog_falloff) * progress,
+            mie_scattering_scale=start_weather.mie_scattering_scale,
             precipitation=start_weather.precipitation +
             (end_weather.precipitation - start_weather.precipitation) * progress,
             precipitation_deposits=start_weather.precipitation_deposits +
             (end_weather.precipitation_deposits -
              start_weather.precipitation_deposits) * progress,
-            wind_intensity=start_weather.wind_intensity +
-            (end_weather.wind_intensity - start_weather.wind_intensity) * progress,
+            rayleigh_scattering_scale=start_weather.rayleigh_scattering_scale,
+            scattering_intensity=start_weather.scattering_intensity +
+            (end_weather.scattering_intensity -
+             start_weather.scattering_intensity) * progress,
             sun_azimuth_angle=start_weather.sun_azimuth_angle +
             (end_weather.sun_azimuth_angle -
              start_weather.sun_azimuth_angle) * progress,
             sun_altitude_angle=start_weather.sun_altitude_angle +
             (end_weather.sun_altitude_angle -
              start_weather.sun_altitude_angle) * progress,
-            dust_storm=start_weather.dust_storm,
-            mie_scattering_scale=start_weather.mie_scattering_scale,
-            rayleigh_scattering_scale=start_weather.rayleigh_scattering_scale,
-            scattering_intensity=start_weather.scattering_intensity +
-            (end_weather.scattering_intensity -
-             start_weather.scattering_intensity) * progress,
+            wind_intensity=start_weather.wind_intensity +
+            (end_weather.wind_intensity - start_weather.wind_intensity) * progress,
             wetness=start_weather.wetness +
             (end_weather.wetness - start_weather.wetness) * progress
         )
@@ -221,6 +228,8 @@ def main():
 
     json_string = json.dumps(metadata, indent=4)
     file_path = f'./out/metadata-{datetime.now().strftime("%Y%m%d%H%M%S")}.json'
+    client.start_recorder(
+        f'/home/arpit/manideep/carla/out/recording{datetime.now().strftime("%Y%m%d%H%M%S")}.log', True)
     with open(file_path, "w") as file:
         file.write(json_string)
     try:
@@ -232,6 +241,7 @@ def main():
                     continue
 
                 if step > duration:
+                    client.stop_recorder()
                     break
 
                 step = step + 1
@@ -246,8 +256,6 @@ def main():
                         process_fixed, i, frame_id) for i in range(len(fixed))]
                     concurrent.futures.wait(futures)
 
-                if step > duration:
-                    break
                 progress = step / duration
                 current_weather = interpolate_weather(
                     start_weather, end_weather, progress)
