@@ -674,7 +674,6 @@ def save_calibration_matrices(filename, intrinsic_mat):
     P0 = intrinsic_mat
     P0 = np.column_stack((P0, np.array([0, 0, 0])))
     P0 = np.ravel(P0, order=ravel_mode)
-    R0 = np.identity(3)
 
     def write_flat(f, name, arr):
         f.write("{}: {}\n".format(name, ' '.join(
@@ -684,7 +683,6 @@ def save_calibration_matrices(filename, intrinsic_mat):
     with open(filename, 'w') as f:
         for i in range(4):  # Avod expects all 4 P-matrices even though we only use the first
             write_flat(f, "P" + str(i), P0)
-        write_flat(f, "R0_rect", R0)
 
 
 def saveDepthImage(output, filepath):
