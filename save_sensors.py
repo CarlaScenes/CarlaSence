@@ -572,6 +572,10 @@ def saveRgbImage(output, filepath, world, sensor, ego_vehicle, raycast_detection
             filepath, f'{output.frame}.txt'))
         save_kitti_3d_format(kitti3dbbDVS, os.path.join(
             filepath, f'dvs-{output.frame}.txt'))
+        intrinsic_matrix = get_intrinsic_matrix(
+            output.height, output.width, output.fov)
+        save_calibration_matrices(os.path.join(
+            f'calib-{output.frame}.txt'), intrinsic_matrix)
 
     except Exception as error:
         print("An exception occurred:", error)
@@ -649,6 +653,38 @@ def optical_camera_callback(image, filepath):
     # Save UV map as NPZ file
     uv_map_npz_filename = os.path.join(filepath, f"{image.frame}_uv.npz")
     np.savez(uv_map_npz_filename, u=u_component, v=v_component)
+
+
+def get_intrinsic_matrix(self, height, width, fov):
+
+    width = int(width)
+    height = int(height)
+    fov = float(fov)
+
+    k = np.identity(3)
+    k[0, 2] = width / 2.0
+    k[1, 2] = height / 2.0
+    k[0, 0] = k[1, 1] = width / (2.0 * np.tan(fov * np.pi / 360.0))
+
+    return k
+
+
+def save_calibration_matrices(filename, intrinsic_mat):
+    ravel_mode = 'C'
+    P0 = intrinsic_mat
+    P0 = np.column_stack((P0, np.array([0, 0, 0])))
+    P0 = np.ravel(P0, order=ravel_mode)
+    R0 = np.identity(3)
+
+    def write_flat(f, name, arr):
+        f.write("{}: {}\n".format(name, ' '.join(
+            map(str, arr.flatten(ravel_mode).squeeze()))))
+
+    # All matrices are written on a line with spacing
+    with open(filename, 'w') as f:
+        for i in range(4):  # Avod expects all 4 P-matrices even though we only use the first
+            write_flat(f, "P" + str(i), P0)
+        write_flat(f, "R0_rect", R0)
 
 
 def saveDepthImage(output, filepath):
