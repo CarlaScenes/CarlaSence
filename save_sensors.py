@@ -575,7 +575,7 @@ def saveRgbImage(output, filepath, world, sensor, ego_vehicle, raycast_detection
         intrinsic_matrix = get_intrinsic_matrix(
             output.height, output.width, output.fov)
         save_calibration_matrices(os.path.join(
-            f'calib-{output.frame}.txt'), intrinsic_matrix)
+            filepath, f'calib-{output.frame}.txt'), intrinsic_matrix)
 
     except Exception as error:
         print("An exception occurred:", error)
@@ -617,42 +617,20 @@ def dvs_callback(data, filepath):
     pygame.image.save(surface, output_file)
 
 
-# def optical_camera_callback(image, filepath):
-#     width = image.width
-#     height = image.height
-#     image_data = np.frombuffer(image.raw_data, dtype=np.float32)
-#     image_data = image_data.reshape((height, width, 2))
-#     magnitude = np.sqrt(np.sum(image_data ** 2, axis=2))
-#     normalized_magnitude = cv2.normalize(
-#         magnitude, None, 0, 255, cv2.NORM_MINMAX)
-#     bgr_image = cv2.applyColorMap(
-#         normalized_magnitude.astype(np.uint8), cv2.COLORMAP_JET)
-#     filename = os.path.join(filepath, f"{image.frame}.png")
-#     cv2.imwrite(filename, bgr_image)
-
 def optical_camera_callback(image, filepath):
-    width = image.width
-    height = image.height
     image_data = np.frombuffer(image.raw_data, dtype=np.float32)
-    image_data = image_data.reshape((height, width, 2))
+    image_data = image_data.reshape((image.height, image.width, 2))
+    filename = os.path.join(filepath, f"{image.frame}.npz")
+    data_dict = {'flow': image_data}
+    np.savez_compressed(filename, **data_dict)
 
-    # Separate 'u' and 'v' components
-    u_component = image_data[:, :, 0]
-    v_component = image_data[:, :, 1]
-
-    # Normalize the components for visualization (optional)
-    normalized_u = cv2.normalize(u_component, None, 0, 255, cv2.NORM_MINMAX)
-    normalized_v = cv2.normalize(v_component, None, 0, 255, cv2.NORM_MINMAX)
-
-    # Save 'u' and 'v' components as separate images
-    filename_u = os.path.join(filepath, f"{image.frame}_u.png")
-    filename_v = os.path.join(filepath, f"{image.frame}_v.png")
-    cv2.imwrite(filename_u, normalized_u.astype(np.uint8))
-    cv2.imwrite(filename_v, normalized_v.astype(np.uint8))
-
-    # Save UV map as NPZ file
-    uv_map_npz_filename = os.path.join(filepath, f"{image.frame}_uv.npz")
-    np.savez(uv_map_npz_filename, u=u_component, v=v_component)
+    data = image.get_color_coded_flow()
+    array = np.frombuffer(data.raw_data, dtype=np.dtype("uint8"))
+    array = np.reshape(array, (data.height, data.width, 4))
+    array = array[:, :, :3]
+    array = array[:, :, ::-1]
+    filename = os.path.join(filepath, f"{image.frame}.png")
+    cv2.imwrite(filename, array)
 
 
 def get_intrinsic_matrix(self, height, width, fov):
